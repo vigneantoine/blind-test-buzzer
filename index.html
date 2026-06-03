@@ -302,16 +302,14 @@ async function startSpotifyAuth() {
   const v = genVerifier();
   const c = await genChallenge(v);
 
-  // ✅ FIX : localStorage au lieu de sessionStorage
-  // sessionStorage est vidé par certains navigateurs (Safari, iOS)
-  // lors d'une redirection cross-origin comme le retour depuis Spotify
-  localStorage.setItem('spv',  v);
-  localStorage.setItem('sr',   G.room);
-  localStorage.setItem('sn',   G.name);
-  localStorage.setItem('spid', G.pid);
-  localStorage.setItem('sp_ts', Date.now().toString()); // timestamp pour expiry check
+  localStorage.setItem('spv',   v);
+  localStorage.setItem('sr',    G.room);
+  localStorage.setItem('sn',    G.name);
+  localStorage.setItem('spid',  G.pid);
+  localStorage.setItem('sp_ts', Date.now().toString());
 
   console.log('[Spotify Auth] Redirect URI envoyé :', REDIRECT_URI);
+  console.log('[Spotify Auth] spv sauvegardé :', v.slice(0,10) + '...');
 
   const p = new URLSearchParams({
     client_id: SPOTIFY_CLIENT_ID,
@@ -325,19 +323,18 @@ async function startSpotifyAuth() {
 }
 
 async function exchangeCode(code) {
-  const v = localStorage.getItem('spv'); // ✅ localStorage
+  // ✅ Lire spv EN PREMIER, AVANT toute suppression
+  const v = localStorage.getItem('spv');
+  console.log('[Spotify Token] spv présent :', !!v);
+
   if (!v) {
-    toast('❌ Erreur : données OAuth manquantes. Réessaie depuis l\'accueil.');
-    console.error('[Spotify] spv absent du localStorage');
+    toast('❌ Erreur OAuth : données manquantes. Réessaie.');
     return null;
   }
 
-  // Vérifier que le code n'est pas trop vieux (> 10 min = expiré côté Spotify)
-  const ts = parseInt(localStorage.getItem('sp_ts') || '0');
-  if (Date.now() - ts > 10 * 60 * 1000) {
-    toast('❌ Autorisation expirée (> 10 min). Réessaie.');
-    return null;
-  }
+  // Supprimer spv maintenant qu'on l'a lu (évite réutilisation)
+  localStorage.removeItem('spv');
+  localStorage.removeItem('sp_ts');
 
   console.log('[Spotify Token] redirect_uri :', REDIRECT_URI);
 
@@ -386,8 +383,7 @@ async function spotifyPause(forcePause = false) {
     });
     console.log('[Spotify] Pause :', res.status);
     if (res.status === 204) {
-      G.roundPaused = true;
-      toast('⏸ Musique mise en pause !');
+      G.roundPaused = true; toast('⏸ Musique mise en pause !');
       $('btn-force-pause').style.display = 'none';
     } else if (res.status === 401) {
       G.token = null;
@@ -406,8 +402,7 @@ async function spotifyPause(forcePause = false) {
     }
   } catch (e) {
     $('btn-force-pause').style.display = '';
-    toast('⚠️ Erreur réseau Spotify');
-    console.error(e);
+    toast('⚠️ Erreur réseau Spotify'); console.error(e);
   }
 }
 
@@ -557,16 +552,18 @@ $('join-btn').onclick = () => {
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  const code = params.get('code'), error = params.get('error');
+  const code   = params.get('code');
+  const error  = params.get('error');
 
+  // Restaure la session depuis localStorage
+  // ✅ NE PAS supprimer 'spv' ici — exchangeCode en a besoin
   function restoreSession() {
-    // ✅ FIX : lecture depuis localStorage
-    const ls = localStorage;
-    G.room = ls.getItem('sr');
-    G.name = ls.getItem('sn');
+    G.room = localStorage.getItem('sr');
+    G.name = localStorage.getItem('sn');
     G.role = 'dj';
-    G.pid  = ls.getItem('spid') || uid();
-    ['spv','sr','sn','spid','sp_ts'].forEach(k => ls.removeItem(k));
+    G.pid  = localStorage.getItem('spid') || uid();
+    // Nettoyage des clés sauf 'spv' (lu plus tard dans exchangeCode)
+    ['sr', 'sn', 'spid'].forEach(k => localStorage.removeItem(k));
   }
 
   if (error) {
@@ -574,6 +571,7 @@ async function init() {
     const desc = params.get('error_description') || error;
     console.error('[Spotify OAuth] Erreur :', error, desc);
     restoreSession();
+    ['spv', 'sp_ts'].forEach(k => localStorage.removeItem(k));
     let msg = '❌ Erreur Spotify : ' + desc;
     if (error === 'access_denied') msg = '❌ Autorisation Spotify refusée.';
     else if (desc && desc.toLowerCase().includes('redirect')) msg = '❌ Redirect URI non reconnu — vérifie le Dashboard Spotify.';
@@ -585,15 +583,21 @@ async function init() {
   if (!code) return;
 
   window.history.replaceState({}, '', window.location.pathname);
+
+  // Restaurer la session (sans toucher à 'spv')
   restoreSession();
 
   if (!G.room || !G.name) {
     toast('❌ Session perdue — recommence depuis l\'accueil');
+    ['spv','sp_ts'].forEach(k => localStorage.removeItem(k));
     return;
   }
 
   toast('🔄 Connexion Spotify en cours…');
+
+  // exchangeCode lira et supprimera 'spv' lui-même
   G.token = await exchangeCode(code);
+
   joinRoom();
   setupDJView();
 }
