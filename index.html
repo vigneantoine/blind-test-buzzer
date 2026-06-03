@@ -80,11 +80,13 @@
     }
     .btn:active:not(:disabled) { transform: scale(0.98); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-primary { background: var(--blue);     color: white; }
-    .btn-spotify { background: var(--spotify);  color: white; }
-    .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .btn-sm      { padding: 10px; font-size: 0.9rem; }
-    .btn-warn    { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-primary  { background: var(--blue);    color: white; }
+    .btn-spotify  { background: var(--spotify); color: white; }
+    .btn-ghost    { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm       { padding: 10px; font-size: 0.9rem; }
+    .btn-warn     { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-success  { background: var(--green); color: white; }
+    .btn-danger   { background: var(--red);   color: white; }
 
     .sep { width: 100%; height: 1px; background: var(--border); }
     .section-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); width: 100%; }
@@ -127,6 +129,7 @@
     }
     .share-copy:hover { background: var(--border); }
 
+    /* Players list */
     .players-list { width: 100%; display: flex; flex-direction: column; gap: 8px; }
     .player-row {
       display: flex; align-items: center; gap: 12px; padding: 12px 16px;
@@ -139,9 +142,25 @@
     .player-dot.green { background: var(--green); }
     .player-dot.red   { background: var(--red); }
     .player-name { flex: 1; font-size: 0.95rem; }
+
+    /* Score badge */
+    .score-badge {
+      font-size: 0.78rem; font-weight: 700;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 100px; padding: 2px 9px;
+      color: var(--text); min-width: 28px; text-align: center;
+    }
+    .score-badge.has-score { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: var(--green); }
+
     .no-players { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 12px 0; }
     .status-text { text-align: center; font-size: 0.95rem; color: var(--muted); min-height: 1.4em; }
 
+    /* Action buttons row (Gagné / Perdu) */
+    .action-row { display: none; width: 100%; gap: 10px; }
+    .action-row.visible { display: flex; }
+    .action-row .btn { flex: 1; font-size: 1rem; }
+
+    /* ── BUZZER VIEW ── */
     #view-buzzer { max-width: 100%; height: 100dvh; justify-content: center; }
     .buzzer-wrapper {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -159,11 +178,14 @@
       box-shadow: 0 0 0 14px rgba(59,130,246,0.1), 0 0 60px rgba(59,130,246,0.25);
       -webkit-tap-highlight-color: transparent; user-select: none;
     }
-    #buzzer-btn:active { transform: scale(0.93); }
+    #buzzer-btn:active:not(.green):not(.red) { transform: scale(0.93); }
     #buzzer-btn.green { background: var(--green); box-shadow: 0 0 0 18px rgba(34,197,94,0.12), 0 0 80px rgba(34,197,94,0.45); cursor: default; }
     #buzzer-btn.red   { background: var(--red);   box-shadow: 0 0 0 14px rgba(239,68,68,0.1),  0 0 50px rgba(239,68,68,0.25);  cursor: default; }
+    #buzzer-btn.penalty { font-size: 2.4rem; letter-spacing: 0; }
+
     #buzzer-status { font-size: 1.1rem; text-align: center; font-weight: 500; color: var(--muted); min-height: 1.5em; }
 
+    /* Toast */
     #toast {
       position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(16px);
@@ -203,6 +225,7 @@
 <div id="view-dj" class="view">
   <h2>Vue DJ 🎵</h2>
   <div class="badge-room" id="dj-room-code">—</div>
+
   <div class="share-container">
     <div class="share-label">Partage ce lien aux devineurs</div>
     <div class="share-row">
@@ -210,7 +233,9 @@
       <button class="share-copy" id="copy-btn">Copier</button>
     </div>
   </div>
+
   <div class="sep"></div>
+
   <div style="width:100%; display:flex; flex-direction:column; gap:8px;">
     <button id="btn-spotify" class="btn btn-spotify">🔗 Connecter Spotify</button>
     <div id="spotify-ok" class="spotify-ok">✓ Spotify connecté — pause automatique activée</div>
@@ -221,12 +246,23 @@
       <div class="debug-uri-hint">⚠️ Ce texte doit être enregistré EXACTEMENT dans ton Spotify Dashboard</div>
     </div>
   </div>
+
   <div class="sep"></div>
+
   <div style="width:100%">
     <div class="section-label" style="margin-bottom:10px;">Devineurs connectés</div>
     <div class="players-list" id="players-list"><p class="no-players">En attente des joueurs…</p></div>
   </div>
+
   <div class="status-text" id="dj-status"></div>
+
+  <!-- Boutons de décision (visibles après un buzz) -->
+  <div class="action-row" id="action-row">
+    <button id="btn-gagner" class="btn btn-success">✅ Gagné</button>
+    <button id="btn-perdu"  class="btn btn-danger">❌ Perdu</button>
+  </div>
+
+  <!-- Bouton de reset manuel (visible quand personne n'a buzzé) -->
   <button id="reset-btn" class="btn btn-ghost btn-sm">🔄 Nouvelle manche</button>
 </div>
 
@@ -264,7 +300,11 @@ const SPOTIFY_SCOPE = 'user-modify-playback-state user-read-playback-state';
 
 console.log('[Config] Redirect URI :', REDIRECT_URI);
 
-let G = { room: null, name: null, role: 'guesser', pid: null, token: null, roundPaused: false };
+let G = {
+  room: null, name: null, role: 'guesser',
+  pid: null, token: null, roundPaused: false,
+  currentBuzzedBy: null   // track active buzz for DJ actions
+};
 
 firebase.initializeApp(FIREBASE_CONFIG);
 const db = firebase.database();
@@ -277,7 +317,7 @@ function showView(id) {
 }
 
 let _tt;
-function toast(msg, ms = 5000) {
+function toast(msg, ms = 4000) {
   const el = $('toast');
   el.textContent = msg;
   el.classList.add('show');
@@ -299,111 +339,72 @@ async function genChallenge(v) {
 }
 
 async function startSpotifyAuth() {
-  const v = genVerifier();
-  const c = await genChallenge(v);
-
+  const v = genVerifier(), c = await genChallenge(v);
   localStorage.setItem('spv',   v);
   localStorage.setItem('sr',    G.room);
   localStorage.setItem('sn',    G.name);
   localStorage.setItem('spid',  G.pid);
   localStorage.setItem('sp_ts', Date.now().toString());
-
-  console.log('[Spotify Auth] Redirect URI envoyé :', REDIRECT_URI);
-  console.log('[Spotify Auth] spv sauvegardé :', v.slice(0,10) + '...');
-
   const p = new URLSearchParams({
-    client_id: SPOTIFY_CLIENT_ID,
-    response_type: 'code',
-    redirect_uri: REDIRECT_URI,
-    code_challenge_method: 'S256',
-    code_challenge: c,
-    scope: SPOTIFY_SCOPE
+    client_id: SPOTIFY_CLIENT_ID, response_type: 'code',
+    redirect_uri: REDIRECT_URI, code_challenge_method: 'S256',
+    code_challenge: c, scope: SPOTIFY_SCOPE
   });
   window.location.href = `https://accounts.spotify.com/authorize?${p}`;
 }
 
 async function exchangeCode(code) {
-  // ✅ Lire spv EN PREMIER, AVANT toute suppression
   const v = localStorage.getItem('spv');
-  console.log('[Spotify Token] spv présent :', !!v);
-
-  if (!v) {
-    toast('❌ Erreur OAuth : données manquantes. Réessaie.');
-    return null;
-  }
-
-  // Supprimer spv maintenant qu'on l'a lu (évite réutilisation)
+  if (!v) { toast('❌ Erreur OAuth : données manquantes. Réessaie.'); return null; }
   localStorage.removeItem('spv');
   localStorage.removeItem('sp_ts');
-
-  console.log('[Spotify Token] redirect_uri :', REDIRECT_URI);
-
   const res = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      client_id: SPOTIFY_CLIENT_ID,
-      grant_type: 'authorization_code',
-      code,
-      redirect_uri: REDIRECT_URI,
-      code_verifier: v
+      client_id: SPOTIFY_CLIENT_ID, grant_type: 'authorization_code',
+      code, redirect_uri: REDIRECT_URI, code_verifier: v
     })
   });
-
   if (!res.ok) {
-    let errBody = '';
-    try { errBody = await res.text(); } catch(e) {}
-    console.error('[Spotify Token] Erreur', res.status, errBody);
-    let hint = '';
-    if (errBody.includes('invalid_grant'))      hint = 'Code expiré ou déjà utilisé — réessaie.';
-    else if (errBody.includes('invalid_client')) hint = 'Client ID incorrect.';
-    else if (errBody.includes('redirect_uri'))   hint = 'Redirect URI ne correspond pas au Dashboard Spotify.';
-    else                                         hint = errBody.slice(0, 120);
+    let b = ''; try { b = await res.text(); } catch(e) {}
+    let hint = b.includes('invalid_grant') ? 'Code expiré — réessaie.'
+             : b.includes('redirect_uri')  ? 'Redirect URI incorrect.'
+             : b.slice(0,100);
     toast('❌ Erreur Spotify (' + res.status + ') : ' + hint);
     return null;
   }
-
   const json = await res.json();
-  if (!json.access_token) {
-    toast('❌ Pas de token Spotify : ' + JSON.stringify(json).slice(0,100));
-    return null;
-  }
-  console.log('[Spotify Token] OK, expire dans', json.expires_in, 's');
-  return json.access_token;
+  return json.access_token || null;
 }
 
-async function spotifyPause(forcePause = false) {
+async function spotifyPause(force = false) {
   if (!G.token) { toast('⚠️ Spotify non connecté'); return; }
-  if (G.roundPaused && !forcePause) return;
+  if (G.roundPaused && !force) return;
   G.roundPaused = false;
   try {
     const res = await fetch('https://api.spotify.com/v1/me/player/pause', {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${G.token}` }
+      method: 'PUT', headers: { Authorization: `Bearer ${G.token}` }
     });
-    console.log('[Spotify] Pause :', res.status);
-    if (res.status === 204) {
-      G.roundPaused = true; toast('⏸ Musique mise en pause !');
-      $('btn-force-pause').style.display = 'none';
-    } else if (res.status === 401) {
-      G.token = null;
-      $('spotify-ok').style.display = 'none'; $('btn-spotify').style.display = '';
-      toast('⚠️ Session Spotify expirée — reconnecte-toi');
-    } else if (res.status === 403) {
-      toast('⚠️ Compte Spotify Premium requis');
-    } else if (res.status === 404) {
-      $('btn-force-pause').style.display = '';
-      toast('⚠️ Aucun appareil Spotify actif. Lance Spotify d\'abord !');
-    } else if (res.status === 202) {
-      G.roundPaused = true; toast('⏸ Pause envoyée…');
-    } else {
-      $('btn-force-pause').style.display = '';
-      toast('⚠️ Erreur Spotify (' + res.status + ')');
-    }
-  } catch (e) {
-    $('btn-force-pause').style.display = '';
-    toast('⚠️ Erreur réseau Spotify'); console.error(e);
-  }
+    if (res.status === 204) { G.roundPaused = true; toast('⏸ Musique en pause !'); $('btn-force-pause').style.display = 'none'; }
+    else if (res.status === 401) { G.token = null; $('spotify-ok').style.display='none'; $('btn-spotify').style.display=''; toast('⚠️ Session Spotify expirée'); }
+    else if (res.status === 403) toast('⚠️ Spotify Premium requis');
+    else if (res.status === 404) { $('btn-force-pause').style.display=''; toast('⚠️ Aucun appareil Spotify actif'); }
+    else { $('btn-force-pause').style.display=''; toast('⚠️ Erreur Spotify (' + res.status + ')'); }
+  } catch(e) { $('btn-force-pause').style.display=''; toast('⚠️ Erreur réseau Spotify'); }
+}
+
+async function spotifyPlay() {
+  if (!G.token) return;
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+      method: 'PUT', headers: { Authorization: `Bearer ${G.token}` }
+    });
+    if (res.status === 204 || res.status === 202) toast('▶ Lecture reprise !');
+    else if (res.status === 403) toast('⚠️ Spotify Premium requis');
+    else if (res.status === 404) toast('⚠️ Aucun appareil Spotify actif');
+    else toast('⚠️ Erreur Spotify lecture (' + res.status + ')');
+  } catch(e) { toast('⚠️ Erreur réseau Spotify'); }
 }
 
 // ── Firebase ─────────────────────────────────────────────────
@@ -425,12 +426,43 @@ async function doBuzz() {
   return result.committed;
 }
 
+// ── Actions DJ ───────────────────────────────────────────────
+
+async function awardPoint() {
+  const loser = G.currentBuzzedBy;
+  if (!loser) return;
+  // Incrémenter le score
+  await rRef(`scores/${loser}`).transaction(cur => (cur || 0) + 1);
+  // Réinitialiser le round (effacer aussi les pénalités)
+  await rRef().update({ buzzedBy: null, status: 'waiting', penalties: null });
+  G.roundPaused = false;
+  toast('🏆 Point accordé !');
+}
+
+async function penalizePlayer() {
+  const loser = G.currentBuzzedBy;
+  if (!loser) return;
+  // Pénalité : timestamp de début + reset du buzz
+  await rRef().update({
+    buzzedBy: null,
+    status:   'waiting',
+    [`penalties/${loser}`]: Date.now()
+  });
+  G.roundPaused = false;
+  // Relancer la musique
+  await spotifyPlay();
+  toast('❌ Mauvaise réponse — pénalité 5s pour ' + (lastPlayers[loser]?.name || 'le joueur') + ' !');
+}
+
 async function resetRound() {
   G.roundPaused = false;
   $('btn-force-pause').style.display = 'none';
-  await rRef().update({ buzzedBy: null, status: 'waiting' });
+  await rRef().update({ buzzedBy: null, status: 'waiting', penalties: null });
   toast('🔄 Nouvelle manche !');
 }
+
+// Variable pour mémoriser les joueurs dans les handlers
+let lastPlayers = {};
 
 // ── Vue DJ ───────────────────────────────────────────────────
 
@@ -444,9 +476,7 @@ function setupDJView() {
   $('debug-uri-box').style.display = G.token ? 'none' : '';
 
   $('copy-btn').onclick = () => {
-    navigator.clipboard?.writeText(shareUrl)
-      .then(() => toast('🔗 Lien copié !'))
-      .catch(() => toast('Lien : ' + shareUrl));
+    navigator.clipboard?.writeText(shareUrl).then(() => toast('🔗 Lien copié !')).catch(() => toast('Lien : ' + shareUrl));
   };
 
   if (G.token) {
@@ -459,38 +489,73 @@ function setupDJView() {
 
   $('reset-btn').onclick       = resetRound;
   $('btn-force-pause').onclick = () => spotifyPause(true);
+  $('btn-gagner').onclick      = awardPoint;
+  $('btn-perdu').onclick       = penalizePlayer;
 
   rRef().on('value', snap => {
-    const data     = snap.val() || {};
-    const players  = data.players  || {};
-    const buzzedBy = data.buzzedBy ?? null;
+    const data      = snap.val() || {};
+    const players   = data.players   || {};
+    const scores    = data.scores    || {};
+    const buzzedBy  = data.buzzedBy  ?? null;
+    const penalties = data.penalties || {};
+
+    lastPlayers = players;
+    G.currentBuzzedBy = buzzedBy;
+
+    // ── Liste des joueurs avec scores ──
     const guessers = Object.entries(players).filter(([, p]) => p.role === 'guesser');
     const list = $('players-list');
     list.innerHTML = '';
+
     if (guessers.length === 0) {
       list.innerHTML = '<p class="no-players">En attente des joueurs…</p>';
     } else {
       guessers.forEach(([id, p]) => {
-        const won = buzzedBy === id, lost = buzzedBy && buzzedBy !== id;
+        const won  = buzzedBy === id;
+        const lost = buzzedBy && buzzedBy !== id;
+        const pen  = !!penalties[id];
+        const pts  = scores[id] || 0;
+
         const row = document.createElement('div');
-        row.className = 'player-row' + (won ? ' winner' : lost ? ' loser' : '');
+        row.className = 'player-row' + (won ? ' winner' : (lost || pen) ? ' loser' : '');
+
         const dot = document.createElement('div');
-        dot.className = 'player-dot' + (won ? ' green' : lost ? ' red' : '');
+        dot.className = 'player-dot' + (won ? ' green' : (lost || pen) ? ' red' : '');
+
         const name = document.createElement('div');
-        name.className = 'player-name'; name.textContent = p.name;
-        row.appendChild(dot); row.appendChild(name);
-        if (won) { const cr = document.createElement('span'); cr.textContent = '🏆'; cr.style.fontSize='1.1rem'; row.appendChild(cr); }
+        name.className = 'player-name';
+        name.textContent = p.name;
+
+        // Score badge
+        const score = document.createElement('div');
+        score.className = 'score-badge' + (pts > 0 ? ' has-score' : '');
+        score.textContent = pts + ' pt' + (pts > 1 ? 's' : '');
+
+        row.appendChild(dot);
+        row.appendChild(name);
+        if (won) { const cr = document.createElement('span'); cr.textContent = '🏆'; cr.style.cssText='font-size:1rem;margin-right:4px;'; row.appendChild(cr); }
+        if (pen) { const pn = document.createElement('span'); pn.textContent = '⏳'; pn.title='Pénalité en cours'; pn.style.cssText='font-size:0.9rem;margin-right:4px;'; row.appendChild(pn); }
+        row.appendChild(score);
         list.appendChild(row);
       });
     }
-    const statusEl = $('dj-status');
+
+    // ── Boutons d'action + statut ──
+    const statusEl   = $('dj-status');
+    const actionRow  = $('action-row');
+    const resetBtn   = $('reset-btn');
+
     if (buzzedBy) {
       const winner = players[buzzedBy];
-      statusEl.textContent = winner ? `🏆 ${winner.name} a buzzé en premier !` : '🏆 Un joueur a buzzé !';
+      statusEl.textContent = winner ? `🏆 ${winner.name} a buzzé — bonne réponse ?` : '🏆 Un joueur a buzzé !';
+      actionRow.classList.add('visible');
+      resetBtn.style.display = 'none';
       if (!G.roundPaused) spotifyPause();
     } else {
+      actionRow.classList.remove('visible');
+      resetBtn.style.display = '';
       $('btn-force-pause').style.display = 'none';
-      statusEl.textContent = guessers.length > 0 ? `${guessers.length} devineur(s) connecté(s) — prêt !` : '';
+      statusEl.textContent = guessers.length > 0 ? `${guessers.length} devineur(s) — prêt à jouer !` : '';
     }
   });
 }
@@ -500,25 +565,81 @@ function setupDJView() {
 function setupBuzzerView() {
   showView('view-buzzer');
   $('buzzer-name').textContent = G.name;
-  const btn = $('buzzer-btn'), status = $('buzzer-status');
-  let canBuzz = true;
+
+  const btn    = $('buzzer-btn');
+  const status = $('buzzer-status');
+  let canBuzz  = true;
+
+  // Gestion de la pénalité (timer client-side)
+  let penaltyTimer        = null;
+  let activePenaltyStart  = null;
+
+  function startPenalty(startedAt) {
+    if (penaltyTimer) return; // déjà en cours
+    activePenaltyStart = startedAt;
+    canBuzz = false;
+    btn.className = 'red penalty';
+
+    penaltyTimer = setInterval(() => {
+      const elapsed   = Date.now() - startedAt;
+      const remaining = Math.max(0, 5000 - elapsed);
+      const secs      = Math.ceil(remaining / 1000);
+      btn.textContent = secs > 0 ? secs + 's' : '✗';
+
+      if (remaining <= 0) {
+        clearInterval(penaltyTimer);
+        penaltyTimer       = null;
+        activePenaltyStart = null;
+        // Supprimer la pénalité dans Firebase
+        rRef(`penalties/${G.pid}`).remove();
+        // Remettre le bouton en état normal
+        btn.className   = '';
+        btn.textContent = 'BUZZ!';
+        status.textContent = 'Écoute et buzze quand tu reconnais !';
+        canBuzz = true;
+      }
+    }, 100);
+  }
+
   btn.onclick = async () => {
     if (!canBuzz) return;
     if (navigator.vibrate) navigator.vibrate(80);
     await doBuzz();
   };
+
   rRef().on('value', snap => {
-    const buzzedBy = (snap.val() || {}).buzzedBy ?? null;
+    const data      = snap.val() || {};
+    const buzzedBy  = data.buzzedBy  ?? null;
+    const penalties = data.penalties || {};
+    const myPenalty = penalties[G.pid] ?? null;
+
+    // Cas 1 : pénalité active sur MOI
+    if (myPenalty && myPenalty !== activePenaltyStart) {
+      startPenalty(myPenalty);
+      status.textContent = 'Pénalité… tu pourras rebuzzer dans 5s';
+      return;
+    }
+
+    // Cas 2 : pénalité en cours (timer déjà démarré) — ne pas écraser l'état
+    if (activePenaltyStart) return;
+
+    // Cas 3 : états normaux
     if (!buzzedBy) {
-      btn.className = ''; btn.textContent = 'BUZZ!';
-      status.textContent = 'Écoute et buzze quand tu reconnais !'; canBuzz = true;
+      btn.className   = '';
+      btn.textContent = 'BUZZ!';
+      status.textContent = 'Écoute et buzze quand tu reconnais !';
+      canBuzz = true;
     } else if (buzzedBy === G.pid) {
-      btn.className = 'green'; btn.textContent = '🏆';
-      status.textContent = 'Tu as buzzé en premier !'; canBuzz = false;
+      btn.className   = 'green';
+      btn.textContent = '🏆';
+      status.textContent = 'Tu as buzzé en premier !';
+      canBuzz = false;
       if (navigator.vibrate) navigator.vibrate([100,50,150]);
     } else {
-      btn.className = 'red'; btn.textContent = '✗';
-      status.textContent = 'Trop tard… 😅'; canBuzz = false;
+      btn.className   = 'red';
+      btn.textContent = '✗';
+      status.textContent = 'Trop tard… 😅';
+      canBuzz = false;
     }
   });
 }
@@ -552,29 +673,24 @@ $('join-btn').onclick = () => {
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  const code   = params.get('code');
-  const error  = params.get('error');
+  const code = params.get('code'), error = params.get('error');
 
-  // Restaure la session depuis localStorage
-  // ✅ NE PAS supprimer 'spv' ici — exchangeCode en a besoin
   function restoreSession() {
     G.room = localStorage.getItem('sr');
     G.name = localStorage.getItem('sn');
     G.role = 'dj';
     G.pid  = localStorage.getItem('spid') || uid();
-    // Nettoyage des clés sauf 'spv' (lu plus tard dans exchangeCode)
-    ['sr', 'sn', 'spid'].forEach(k => localStorage.removeItem(k));
+    ['sr','sn','spid'].forEach(k => localStorage.removeItem(k));
   }
 
   if (error) {
     window.history.replaceState({}, '', window.location.pathname);
     const desc = params.get('error_description') || error;
-    console.error('[Spotify OAuth] Erreur :', error, desc);
     restoreSession();
-    ['spv', 'sp_ts'].forEach(k => localStorage.removeItem(k));
-    let msg = '❌ Erreur Spotify : ' + desc;
-    if (error === 'access_denied') msg = '❌ Autorisation Spotify refusée.';
-    else if (desc && desc.toLowerCase().includes('redirect')) msg = '❌ Redirect URI non reconnu — vérifie le Dashboard Spotify.';
+    ['spv','sp_ts'].forEach(k => localStorage.removeItem(k));
+    let msg = error === 'access_denied' ? '❌ Autorisation Spotify refusée.'
+            : desc?.toLowerCase().includes('redirect') ? '❌ Redirect URI incorrect — vérifie le Dashboard Spotify.'
+            : '❌ Erreur Spotify : ' + desc;
     if (G.room && G.name) { joinRoom(); setupDJView(); setTimeout(() => toast(msg, 8000), 500); }
     else toast(msg, 8000);
     return;
@@ -583,8 +699,6 @@ async function init() {
   if (!code) return;
 
   window.history.replaceState({}, '', window.location.pathname);
-
-  // Restaurer la session (sans toucher à 'spv')
   restoreSession();
 
   if (!G.room || !G.name) {
@@ -594,10 +708,7 @@ async function init() {
   }
 
   toast('🔄 Connexion Spotify en cours…');
-
-  // exchangeCode lira et supprimera 'spv' lui-même
   G.token = await exchangeCode(code);
-
   joinRoom();
   setupDJView();
 }
