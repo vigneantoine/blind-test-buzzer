@@ -284,7 +284,6 @@ const FIREBASE_CONFIG = {
 const REDIRECT_URI  = window.location.origin + window.location.pathname;
 const SPOTIFY_SCOPE = 'user-modify-playback-state user-read-playback-state user-read-currently-playing playlist-read-private playlist-modify-public playlist-modify-private';
 
-// [FIX] grantedScopes stocke les scopes RÉELLEMENT accordés par Spotify au moment du token exchange
 let G = { room:null,name:null,role:'guesser',pid:null,token:null,
           roundPaused:false,currentBuzzedBy:null,isPlaying:false,userId:null,activeDeviceId:null,grantedScopes:'' };
 let pendingAddTrackUri = null;
@@ -320,7 +319,6 @@ async function exchangeCode(code){
     headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});
   if(!res.ok){let b='';try{b=await res.text();}catch(e){}toast('❌ Spotify ('+res.status+'): '+(b.includes('redirect_uri')?'Redirect URI incorrect.':b.slice(0,80)));return null;}
-  // [FIX] On capture aussi les scopes RÉELLEMENT accordés par Spotify (pas seulement ceux demandés)
   const td=await res.json();
   G.grantedScopes=td.scope||'';
   console.log('[OAuth] Scopes accordés par Spotify:', G.grantedScopes);
@@ -453,8 +451,6 @@ function renderResults(tracks){
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-// [FIX] showPlaylistError est maintenant async : en cas de 403 elle fait un diagnostic automatique
-// pour afficher : playlist publique/privée, ownership, scopes accordés vs requis
 async function showPlaylistError(status, rawBody, trackUri, playlistId){
   const display = rawBody||'(réponse vide)';
   let diagHtml = '';
@@ -469,12 +465,11 @@ async function showPlaylistError(status, rawBody, trackUri, playlistId){
       const plData=plRes?.status===200?await plRes.json():null;
       const meData=meRes?.status===200?await meRes.json():null;
 
-      const isPublic=plData?.public;           // true=publique, false=privée, null=inconnu
+      const isPublic=plData?.public;
       const isCollab=plData?.collaborative;
       const plOwner=plData?.owner?.id||'?';
       const meId=meData?.id||G.userId||'?';
 
-      // Scope requis selon visibilité
       const neededScope=isPublic?'playlist-modify-public':'playlist-modify-private';
       const scopes=G.grantedScopes||'';
       const hasNeededScope=scopes.includes(neededScope);
@@ -552,8 +547,8 @@ async function openPlaylistModal(trackUri){
         item.textContent='⏳ Ajout en cours…';item.style.opacity='0.6';
         console.log('[Playlist Add] URI:',pendingAddTrackUri,'→',pl.id,pl.name);
 
-        // === Tentative 1 : JSON body (méthode standard) ===
-        const r1=await spFetch('POST',`/playlists/${pl.id}/tracks`,{uris:[pendingAddTrackUri]});
+        // === Tentative 1 : JSON body — endpoint /items (API Spotify fév. 2026) ===
+        const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});
         let raw1='';
         if(r1)try{raw1=await r1.text();}catch(e){}
         console.log('[Playlist Add] T1 status:',r1?.status,'body:',raw1);
@@ -564,7 +559,7 @@ async function openPlaylistModal(trackUri){
 
         // === Tentative 2 : query param (fallback) ===
         console.log('[Playlist Add] T2 essai query param…');
-        const r2=await spFetch('POST',`/playlists/${pl.id}/tracks?uris=${encodeURIComponent(pendingAddTrackUri)}`);
+        const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);
         let raw2='';
         if(r2)try{raw2=await r2.text();}catch(e){}
         console.log('[Playlist Add] T2 status:',r2?.status,'body:',raw2);
@@ -575,7 +570,6 @@ async function openPlaylistModal(trackUri){
 
         // === Échec des deux — diagnostic automatique ===
         item.textContent=original;item.style.opacity='1';
-        // [FIX] await car showPlaylistError est maintenant async (fetch diagnostics)
         await showPlaylistError(r1?.status||r2?.status||'?', raw1||raw2, pendingAddTrackUri, pl.id);
       };
       list.appendChild(item);
