@@ -71,11 +71,14 @@
     .sp-c { background:none; border:none; color:rgba(255,255,255,.75); font-size:1rem; cursor:pointer; padding:5px; border-radius:50%; transition:color .2s; -webkit-tap-highlight-color:transparent; }
     .sp-c:hover { color:white; }
     .sp-c.main { font-size:1.55rem; color:white; }
-    .sp-devices { display:flex; flex-wrap:wrap; gap:6px; flex-shrink:0; }
-    .sp-device-btn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:20px; color:rgba(255,255,255,.7); font-size:.72rem; padding:4px 10px; cursor:pointer; transition:all .2s; white-space:nowrap; }
-    .sp-device-btn:hover { background:rgba(255,255,255,.14); color:white; }
-    .sp-device-btn.active-device { background:rgba(29,185,84,.15); border-color:rgba(29,185,84,.3); color:var(--spotify); }
-    .sp-no-device { font-size:.75rem; color:rgba(255,255,255,.3); text-align:center; padding:4px 0; }
+    /* Next track */
+    .sp-next-track { display:none; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:8px; padding:8px 10px; flex-shrink:0; }
+    .sp-next-label { font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.3); margin-bottom:5px; }
+    .sp-next-inner { display:flex; align-items:center; gap:8px; }
+    .sp-next-art { width:32px; height:32px; border-radius:4px; object-fit:cover; flex-shrink:0; background:rgba(255,255,255,.08); }
+    .sp-next-name { font-size:.78rem; font-weight:600; color:rgba(255,255,255,.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sp-next-artist { font-size:.68rem; color:rgba(255,255,255,.38); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    /* Search section */
     .sp-search-section { flex:1; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
     .sp-search-bar { display:flex; gap:8px; }
     .sp-search-input { flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:white; padding:9px 12px; font-size:.85rem; outline:none; transition:border-color .2s; }
@@ -97,6 +100,7 @@
     .sp-act-btn.play:hover { background:#1ed760; }
     .sp-act-btn.add { background:rgba(255,255,255,.1); color:white; border:1px solid rgba(255,255,255,.18); }
     .sp-act-btn.add:hover { background:rgba(255,255,255,.2); }
+    /* Modals */
     .sp-modal { position:absolute; inset:0; background:rgba(10,8,16,.93); display:none; flex-direction:column; z-index:20; padding:16px; gap:10px; }
     .sp-modal.open { display:flex; }
     .sp-modal-header { display:flex; justify-content:space-between; align-items:center; }
@@ -115,10 +119,20 @@
     .sp-connected-badge { display:none; align-items:center; gap:6px; padding:6px 10px; background:rgba(29,185,84,.12); border:1px solid rgba(29,185,84,.25); border-radius:8px; color:var(--spotify); font-size:.78rem; font-weight:500; }
     .sp-reauth-btn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:6px; color:rgba(255,255,255,.55); font-size:.72rem; padding:5px 9px; cursor:pointer; transition:all .2s; white-space:nowrap; }
     .sp-reauth-btn:hover { background:rgba(255,255,255,.12); color:white; }
+    .sp-pl-btn { background:rgba(29,185,84,.12); border:1px solid rgba(29,185,84,.25); border-radius:6px; color:var(--spotify); font-size:.72rem; padding:5px 9px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    .sp-pl-btn:hover { background:rgba(29,185,84,.22); }
     .debug-uri-box { background:rgba(249,115,22,.08); border:1px solid rgba(249,115,22,.25); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
     .debug-uri-label { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--orange); }
     .debug-uri-value { font-size:.72rem; color:var(--text); word-break:break-all; font-family:monospace; }
     .debug-uri-hint  { font-size:.68rem; color:var(--muted); }
+    /* Playlist item in play modal */
+    .sp-pl-row { display:flex; align-items:center; gap:10px; }
+    .sp-pl-cover { width:40px; height:40px; border-radius:4px; object-fit:cover; flex-shrink:0; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+    .sp-pl-info { min-width:0; flex:1; }
+    .sp-pl-name { font-size:.85rem; font-weight:600; color:white; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sp-pl-count { font-size:.7rem; color:rgba(255,255,255,.38); }
+    .sp-pl-active { background:rgba(29,185,84,.1) !important; border:1px solid rgba(29,185,84,.25) !important; }
+    /* Game panel */
     .game-panel { flex:0 0 50%; background:var(--surface); border-left:1px solid var(--border); display:flex; flex-direction:column; gap:14px; padding:20px; overflow-y:auto; }
     @media(max-width:720px) { .game-panel { flex:none; border-left:none; border-top:1px solid var(--border); } }
     .room-badge { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:8px 16px; font-size:1.1rem; font-weight:700; letter-spacing:3px; text-align:center; }
@@ -190,6 +204,8 @@
 <div id="view-dj" class="view">
   <div class="sp-panel">
     <div class="sp-bg" id="sp-bg"></div>
+
+    <!-- Déconnecté -->
     <div class="sp-disconnected sp-z" id="sp-disconnected">
       <div class="sp-disco-icon">💿</div>
       <p class="sp-disco-text">Connecte Spotify pour accéder au lecteur et à la recherche</p>
@@ -200,12 +216,19 @@
         <div class="debug-uri-hint">Enregistrer exactement dans Spotify Dashboard</div>
       </div>
     </div>
-    <div id="sp-connected" style="display:none;flex-direction:column;gap:12px;flex:1;overflow:hidden;">
+
+    <!-- Connecté -->
+    <div id="sp-connected" style="display:none;flex-direction:column;gap:10px;flex:1;overflow:hidden;">
+
+      <!-- Barre du haut : badge + boutons -->
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;" class="sp-z">
         <div class="sp-connected-badge" id="spotify-ok" style="display:flex;">✓ Spotify connecté</div>
-        <button class="sp-reauth-btn" onclick="reauthorizeSpotify()" title="Re-autoriser Spotify (obtenir droits playlist)">🔑 Droits</button>
+        <button class="sp-pl-btn" onclick="openPlayPlaylistModal()">🎵 Playlists</button>
+        <button class="sp-reauth-btn" onclick="reauthorizeSpotify()" title="Re-autoriser Spotify">🔑 Droits</button>
         <button id="btn-force-pause" class="btn btn-warn btn-sm" style="display:none;flex:1;min-width:0;">⏸ Forcer pause</button>
       </div>
+
+      <!-- Lecture en cours -->
       <div class="sp-now-playing sp-z">
         <div class="sp-art-placeholder-sm" id="sp-art-ph">💿</div>
         <img id="sp-art" class="sp-art-sm" src="" alt="" style="display:none;">
@@ -223,9 +246,20 @@
           <button class="sp-c" id="sp-next">⏭</button>
         </div>
       </div>
-      <div class="sp-z">
-        <div class="sp-devices" id="sp-devices-list"><span class="sp-no-device">Chargement des appareils…</span></div>
+
+      <!-- Piste suivante -->
+      <div class="sp-next-track sp-z" id="sp-next-track">
+        <div class="sp-next-label">↩ Suivant</div>
+        <div class="sp-next-inner">
+          <img id="sp-next-art" class="sp-next-art" src="" alt="">
+          <div style="min-width:0;">
+            <div class="sp-next-name" id="sp-next-name"></div>
+            <div class="sp-next-artist" id="sp-next-artist"></div>
+          </div>
+        </div>
       </div>
+
+      <!-- Recherche -->
       <div class="sp-search-section sp-z">
         <div class="sp-search-bar">
           <input class="sp-search-input" id="sp-search-inp" type="text" placeholder="🔍  Rechercher une chanson, un artiste…">
@@ -236,6 +270,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal : ajouter à une playlist -->
     <div class="sp-modal" id="sp-pl-modal">
       <div class="sp-modal-header">
         <span class="sp-modal-title">Ajouter à une playlist</span>
@@ -243,7 +279,19 @@
       </div>
       <div class="sp-modal-list" id="sp-pl-list"><p class="sp-modal-empty">Chargement…</p></div>
     </div>
+
+    <!-- Modal : choisir une playlist à jouer -->
+    <div class="sp-modal" id="sp-play-modal">
+      <div class="sp-modal-header">
+        <span class="sp-modal-title">🎵 Jouer une playlist</span>
+        <button class="sp-modal-close" id="sp-play-close">✕</button>
+      </div>
+      <div class="sp-modal-list" id="sp-play-list"><p class="sp-modal-empty">Chargement…</p></div>
+    </div>
+
   </div>
+
+  <!-- Panneau jeu -->
   <div class="game-panel">
     <div class="room-badge" id="dj-room-code">—</div>
     <div class="share-row-c">
@@ -343,25 +391,23 @@ async function ensureUserId(){
   return G.userId;
 }
 
-async function fetchDevices(){const res=await spFetch('GET','/me/player/devices');if(!res||res.status!==200)return[];return(await res.json()).devices||[];}
-
-function renderDevices(devices){
-  const c=$('sp-devices-list');c.innerHTML='';
-  if(!devices.length){c.innerHTML='<span class="sp-no-device">Aucun appareil Spotify — ouvre Spotify sur ton téléphone ou ordi</span>';return;}
-  devices.forEach(d=>{
-    const btn=document.createElement('button');btn.className='sp-device-btn'+(d.is_active?' active-device':'');
-    btn.textContent=(d.is_active?'▶ ':'')+d.name;
-    btn.onclick=async()=>{await transferToDevice(d.id);toast('📱 Lecture → '+d.name);setTimeout(()=>{fetchDevices().then(renderDevices);fetchSpotifyState();},1000);};
-    c.appendChild(btn);
-  });
-}
-
-async function transferToDevice(deviceId,play=false){G.activeDeviceId=deviceId;return await spFetch('PUT','/me/player',{device_ids:[deviceId],play});}
-async function getOrActivateDevice(){
-  const devices=await fetchDevices();renderDevices(devices);if(!devices.length)return null;
-  const active=devices.find(d=>d.is_active);if(active){G.activeDeviceId=active.id;return active.id;}
-  const first=devices[0];await transferToDevice(first.id,false);G.activeDeviceId=first.id;
-  await new Promise(r=>setTimeout(r,600));return first.id;
+// ── Lecture auto sur appareil actif (sans UI de sélection) ────
+async function getActiveDevice(){
+  try{
+    const res=await spFetch('GET','/me/player/devices');
+    if(!res||res.status!==200)return null;
+    const devices=(await res.json()).devices||[];
+    const active=devices.find(d=>d.is_active);
+    if(active){G.activeDeviceId=active.id;return active.id;}
+    if(devices.length){
+      const first=devices[0];
+      await spFetch('PUT','/me/player',{device_ids:[first.id],play:false});
+      G.activeDeviceId=first.id;
+      await new Promise(r=>setTimeout(r,500));
+      return first.id;
+    }
+  }catch(e){}
+  return null;
 }
 
 async function spotifyPause(force=false){
@@ -370,7 +416,7 @@ async function spotifyPause(force=false){
   const res=await spFetch('PUT','/me/player/pause');if(!res)return;
   if(res.status===204||res.status===202){G.roundPaused=true;G.isPlaying=false;$('sp-pp').textContent='▶';$('btn-force-pause').style.display='none';}
   else if(res.status===403)toast('⚠️ Spotify Premium requis');
-  else if(res.status===404){$('btn-force-pause').style.display='';toast('⚠️ Aucun appareil Spotify actif');}
+  else if(res.status===404){$('btn-force-pause').style.display='';toast('⚠️ Aucun appareil Spotify actif — ouvre Spotify');}
   else{$('btn-force-pause').style.display='';toast('⚠️ Erreur Spotify pause ('+res.status+')');}
 }
 
@@ -379,22 +425,43 @@ async function spotifyPlay(uri){
   let res=await spFetch('PUT','/me/player/play',body);if(!res)return;
   if(res.status===404){
     toast('🔍 Recherche d\'un appareil Spotify…');
-    const deviceId=await getOrActivateDevice();
-    if(!deviceId){toast('⚠️ Ouvre Spotify sur un appareil puis réessaie');return;}
+    const deviceId=await getActiveDevice();
+    if(!deviceId){toast('⚠️ Ouvre Spotify sur ton téléphone ou ordi puis réessaie');return;}
     const pb=uri?{uris:[uri],device_id:deviceId}:{device_id:deviceId};
     res=await spFetch('PUT','/me/player/play',pb);
   }
   if(!res)return;
-  if(res.status===204||res.status===202){G.isPlaying=true;$('sp-pp').textContent='⏸';if(!uri)toast('▶ Lecture reprise !');setTimeout(fetchSpotifyState,800);}
+  if(res.status===204||res.status===202){G.isPlaying=true;$('sp-pp').textContent='⏸';if(!uri)toast('▶ Lecture reprise !');setTimeout(fetchSpotifyState,800);setTimeout(fetchQueue,1500);}
   else if(res.status===403)toast('⚠️ Spotify Premium requis');
   else if(res.status===404)toast('⚠️ Impossible de démarrer — ouvre Spotify manuellement');
   else toast('⚠️ Erreur Spotify play ('+res.status+')');
 }
 
-async function spotifyNext(){await spFetch('POST','/me/player/next');setTimeout(fetchSpotifyState,800);}
-async function spotifyPrev(){await spFetch('POST','/me/player/previous');setTimeout(fetchSpotifyState,800);}
+// ── Jouer une playlist en contexte ───────────────────────────
+async function playPlaylist(playlistId, playlistName){
+  const body={context_uri:`spotify:playlist:${playlistId}`};
+  let res=await spFetch('PUT','/me/player/play',body);if(!res)return;
+  if(res.status===404){
+    toast('🔍 Recherche d\'un appareil…');
+    const deviceId=await getActiveDevice();
+    if(!deviceId){toast('⚠️ Ouvre Spotify puis réessaie');return;}
+    res=await spFetch('PUT','/me/player/play',{...body,device_id:deviceId});
+  }
+  if(!res)return;
+  if(res.status===204||res.status===202){
+    G.isPlaying=true;$('sp-pp').textContent='⏸';
+    toast('▶ '+playlistName);
+    setTimeout(fetchSpotifyState,800);setTimeout(fetchQueue,1500);
+  } else {
+    toast('⚠️ Erreur lecture playlist ('+res.status+')');
+  }
+}
+
+async function spotifyNext(){await spFetch('POST','/me/player/next');setTimeout(fetchSpotifyState,800);setTimeout(fetchQueue,1500);}
+async function spotifyPrev(){await spFetch('POST','/me/player/previous');setTimeout(fetchSpotifyState,800);setTimeout(fetchQueue,1500);}
 
 let _spPoller=null,_progTimer=null,_lastTrack=null;
+
 async function fetchSpotifyState(){
   if(!G.token)return;const res=await spFetch('GET','/me/player');if(!res)return;
   if(res.status===204){updateNowPlaying(null,false,0,0);return;}if(res.status!==200)return;
@@ -404,8 +471,26 @@ async function fetchSpotifyState(){
   startProgTimer(d.is_playing,d.progress_ms,d.item.duration_ms);
 }
 
+// ── Piste suivante ────────────────────────────────────────────
+async function fetchQueue(){
+  if(!G.token)return;
+  const res=await spFetch('GET','/me/player/queue');
+  if(!res||res.status!==200){$('sp-next-track').style.display='none';return;}
+  let data;try{data=await res.json();}catch(e){return;}
+  const next=data.queue?.[0];
+  if(next){
+    const artUrl=next.album?.images?.[2]?.url||next.album?.images?.[0]?.url||'';
+    $('sp-next-art').src=artUrl;
+    $('sp-next-name').textContent=next.name||'—';
+    $('sp-next-artist').textContent=next.artists?.map(a=>a.name).join(', ')||'';
+    $('sp-next-track').style.display='';
+  } else {
+    $('sp-next-track').style.display='none';
+  }
+}
+
 function updateNowPlaying(track,isPlaying,prog,dur){
-  if(!track){$('sp-track-name').textContent='Rien en lecture';$('sp-artist-name').textContent='—';$('sp-prog-fill').style.width='0%';$('sp-t-curr').textContent='0:00';$('sp-t-tot').textContent='0:00';$('sp-pp').textContent='▶';return;}
+  if(!track){$('sp-track-name').textContent='Rien en lecture';$('sp-artist-name').textContent='—';$('sp-prog-fill').style.width='0%';$('sp-t-curr').textContent='0:00';$('sp-t-tot').textContent='0:00';$('sp-pp').textContent='▶';$('sp-next-track').style.display='none';return;}
   const artUrl=track.album.images[0]?.url;
   if(artUrl&&track.id!==_lastTrack){_lastTrack=track.id;const img=$('sp-art');img.onload=()=>{img.style.display='block';$('sp-art-ph').style.display='none';};img.src=artUrl;$('sp-bg').style.backgroundImage=`url(${artUrl})`;}
   $('sp-track-name').textContent=track.name;$('sp-artist-name').textContent=track.artists.map(a=>a.name).join(', ');$('sp-pp').textContent=isPlaying?'⏸':'▶';
@@ -416,15 +501,22 @@ function startProgTimer(isPlaying,startMs,dur){
   if(_progTimer){clearInterval(_progTimer);_progTimer=null;}if(!isPlaying)return;
   const t0=Date.now();_progTimer=setInterval(()=>{
     const curr=Math.min(startMs+(Date.now()-t0),dur);$('sp-prog-fill').style.transition='width 1s linear';$('sp-prog-fill').style.width=(curr/dur*100)+'%';$('sp-t-curr').textContent=fmtTime(curr);
-    if(curr>=dur){clearInterval(_progTimer);_progTimer=null;}
+    if(curr>=dur){clearInterval(_progTimer);_progTimer=null;setTimeout(()=>{fetchSpotifyState();fetchQueue();},1200);}
   },1000);
 }
 
+let _queuePollCount=0;
 function startSpotifyPoller(){
-  if(_spPoller)return;fetchSpotifyState();fetchDevices().then(renderDevices);
-  _spPoller=setInterval(()=>{fetchSpotifyState();fetchDevices().then(renderDevices);},5000);
+  if(_spPoller)return;
+  fetchSpotifyState();fetchQueue();
+  _spPoller=setInterval(()=>{
+    fetchSpotifyState();
+    _queuePollCount++;
+    if(_queuePollCount%2===0)fetchQueue(); // toutes les 10s
+  },5000);
 }
 
+// ── Recherche ─────────────────────────────────────────────────
 let _searchDebounce=null;
 async function searchSpotify(q){
   if(!q.trim()){$('sp-results').innerHTML='<p class="sp-result-empty">Tape le nom d\'une chanson pour commencer</p>';return;}
@@ -451,10 +543,40 @@ function renderResults(tracks){
 
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-async function showPlaylistError(status, rawBody, trackUri, playlistId){
-  const display = rawBody||'(réponse vide)';
-  let diagHtml = '';
+// ── Modal : choisir une playlist à JOUER ─────────────────────
+async function openPlayPlaylistModal(){
+  $('sp-play-modal').classList.add('open');
+  $('sp-play-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';
+  const userId=await ensureUserId();
+  const res=await spFetch('GET','/me/playlists?limit=50');
+  if(!res||res.status!==200){$('sp-play-list').innerHTML='<p class="sp-modal-empty">⚠️ Erreur ('+res?.status+')</p>';return;}
+  let json;try{json=await res.json();}catch(e){$('sp-play-list').innerHTML='<p class="sp-modal-empty">⚠️ Réponse illisible</p>';return;}
+  const playlists=json.items||[];
+  const list=$('sp-play-list');list.innerHTML='';
+  if(!playlists.length){list.innerHTML='<p class="sp-modal-empty">Aucune playlist trouvée</p>';return;}
+  playlists.forEach(pl=>{
+    if(!pl||!pl.id)return;
+    const item=document.createElement('div');
+    item.className='sp-modal-item';
+    const artUrl=pl.images?.[0]?.url||'';
+    const imgHtml=artUrl
+      ?`<img src="${artUrl}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;flex-shrink:0;">`
+      :`<div style="width:40px;height:40px;border-radius:4px;background:rgba(255,255,255,.1);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">🎵</div>`;
+    const isOwn=pl.owner?.id===userId;
+    item.innerHTML=`<div class="sp-pl-row">${imgHtml}<div class="sp-pl-info"><div class="sp-pl-name">${esc(pl.name)}</div><div class="sp-pl-count">${pl.tracks?.total??'?'} titres${isOwn?' · ma playlist':''}</div></div></div>`;
+    item.onclick=async()=>{
+      item.style.opacity='0.6';
+      $('sp-play-modal').classList.remove('open');
+      await playPlaylist(pl.id, pl.name);
+    };
+    list.appendChild(item);
+  });
+}
 
+// ── Modal : AJOUTER un titre à une playlist ───────────────────
+async function showPlaylistError(status, rawBody, trackUri, playlistId){
+  const display=rawBody||'(réponse vide)';
+  let diagHtml='';
   if(status===403){
     $('sp-pl-list').innerHTML='<div class="sp-scope-error"><p>⏳ Diagnostic en cours…</p></div>';
     try{
@@ -464,80 +586,34 @@ async function showPlaylistError(status, rawBody, trackUri, playlistId){
       ]);
       const plData=plRes?.status===200?await plRes.json():null;
       const meData=meRes?.status===200?await meRes.json():null;
-
-      const isPublic=plData?.public;
-      const isCollab=plData?.collaborative;
-      const plOwner=plData?.owner?.id||'?';
-      const meId=meData?.id||G.userId||'?';
-
+      const isPublic=plData?.public,isCollab=plData?.collaborative;
+      const plOwner=plData?.owner?.id||'?',meId=meData?.id||G.userId||'?';
       const neededScope=isPublic?'playlist-modify-public':'playlist-modify-private';
       const scopes=G.grantedScopes||'';
-      const hasNeededScope=scopes.includes(neededScope);
       const hasBothScopes=scopes.includes('playlist-modify-public')&&scopes.includes('playlist-modify-private');
+      const hasNeededScope=scopes.includes(neededScope);
       const sameOwner=plOwner!=='?'&&meId!=='?'&&plOwner===meId;
-
-      const scopeStatus=!scopes
-        ? '⚠️ <b>Scopes non capturés</b> — re-autorise Spotify via le bouton ci-dessous'
-        : hasBothScopes
-          ? '✅ Les deux scopes playlist sont présents'
-          : hasNeededScope
-            ? `✅ ${neededScope} présent`
-            : `❌ <b>${neededScope} ABSENT</b> du token — clique "Re-autoriser"`;
-
-      diagHtml=`<div class="err-diag">
-        📋 <b>Playlist</b>: ${isPublic?'publique 🌍':isPublic===false?'privée 🔒':'statut inconnu'} ${isCollab?'(collaborative)':''}<br>
-        👤 <b>Ton ID</b>: ${esc(meId)}<br>
-        🏷 <b>Proprio</b>: ${esc(plOwner)} ${sameOwner?'✅ c\'est toi':'❌ PAS LE MÊME!'}<br>
-        🔑 <b>Scope requis</b>: ${esc(neededScope)}<br>
-        📜 <b>Scopes accordés</b>: <span style="word-break:break-all;font-family:monospace;">${esc(scopes)||'(non capturés — reconnecte)'}</span><br>
-        ${scopeStatus}
-      </div>`;
-    }catch(e){
-      diagHtml=`<div class="err-diag">⚠️ Diagnostic échoué: ${esc(String(e.message))}</div>`;
-    }
+      const scopeStatus=!scopes?'⚠️ <b>Scopes non capturés</b> — re-autorise':hasBothScopes?'✅ Les deux scopes présents':hasNeededScope?`✅ ${neededScope} présent`:`❌ <b>${neededScope} ABSENT</b> — clique Re-autoriser`;
+      diagHtml=`<div class="err-diag">📋 <b>Playlist</b>: ${isPublic?'publique 🌍':isPublic===false?'privée 🔒':'?'} ${isCollab?'(collab)':''}<br>👤 <b>Ton ID</b>: ${esc(meId)}<br>🏷 <b>Proprio</b>: ${esc(plOwner)} ${sameOwner?'✅ c\'est toi':'❌ PAS TOI'}<br>🔑 <b>Scope requis</b>: ${esc(neededScope)}<br>📜 <b>Scopes</b>: <span style="word-break:break-all;font-family:monospace;">${esc(scopes)||'(non capturés)'}</span><br>${scopeStatus}</div>`;
+    }catch(e){diagHtml=`<div class="err-diag">⚠️ Diagnostic échoué: ${esc(String(e.message))}</div>`;}
   }
-
-  $('sp-pl-list').innerHTML=`<div class="sp-scope-error">
-    <p>⚠️ Erreur Spotify ${status}</p>
-    <div class="err-body">${esc(display)}</div>
-    <div class="err-meta">URI : ${esc(trackUri||'?')}<br>Playlist : ${esc(playlistId||'?')}</div>
-    ${diagHtml}
-    <button onclick="reauthorizeSpotify()">🔗 Re-autoriser Spotify</button>
-  </div>`;
+  $('sp-pl-list').innerHTML=`<div class="sp-scope-error"><p>⚠️ Erreur Spotify ${status}</p><div class="err-body">${esc(display)}</div><div class="err-meta">URI : ${esc(trackUri||'?')}<br>Playlist : ${esc(playlistId||'?')}</div>${diagHtml}<button onclick="reauthorizeSpotify()">🔗 Re-autoriser Spotify</button></div>`;
 }
 
-// ── Playlists ─────────────────────────────────────────────────
 async function openPlaylistModal(trackUri){
-  console.log('[Playlist Modal] trackUri:', trackUri);
-  if(!trackUri||typeof trackUri!=='string'||!trackUri.startsWith('spotify:')){
-    toast('⚠️ URI invalide : '+String(trackUri),6000);return;
-  }
+  if(!trackUri||typeof trackUri!=='string'||!trackUri.startsWith('spotify:')){toast('⚠️ URI invalide : '+String(trackUri),6000);return;}
   pendingAddTrackUri=trackUri;
   $('sp-pl-modal').classList.add('open');
   $('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';
-
   const userId=await ensureUserId();
-  console.log('[Playlist Modal] userId:', userId);
-
   const res=await spFetch('GET','/me/playlists?limit=50');
   if(!res){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Erreur réseau</p>';return;}
-  if(res.status===401||res.status===403){
-    $('sp-pl-list').innerHTML=`<div class="sp-scope-error"><p>⚠️ Droits manquants (${res.status})</p><small>Re-connecte Spotify</small><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;
-    return;
-  }
+  if(res.status===401||res.status===403){$('sp-pl-list').innerHTML=`<div class="sp-scope-error"><p>⚠️ Droits manquants (${res.status})</p><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;return;}
   if(res.status!==200){$('sp-pl-list').innerHTML=`<p class="sp-modal-empty">⚠️ Erreur (${res.status})</p>`;return;}
-
   let json;try{json=await res.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Réponse illisible</p>';return;}
-  const all=json.items||[];
-  const owned=all.filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));
-  console.log('[Playlist Modal] Playlists éditables:', owned.length, owned.map(p=>({name:p.name,id:p.id,owner:p.owner?.id})));
-
+  const owned=(json.items||[]).filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));
   const list=$('sp-pl-list');list.innerHTML='';
-  if(!owned.length){
-    list.innerHTML=`<div style="text-align:center;padding:16px;display:flex;flex-direction:column;gap:8px;"><p class="sp-modal-empty">Aucune playlist modifiable</p><small style="color:var(--muted);font-size:.75rem;">Crée une playlist dans Spotify</small></div>`;
-    return;
-  }
-
+  if(!owned.length){list.innerHTML=`<div style="text-align:center;padding:16px;"><p class="sp-modal-empty">Aucune playlist modifiable</p></div>`;return;}
   owned.forEach(pl=>{
     try{
       const item=document.createElement('div');item.className='sp-modal-item';
@@ -545,41 +621,22 @@ async function openPlaylistModal(trackUri){
       item.onclick=async()=>{
         const original=item.textContent;
         item.textContent='⏳ Ajout en cours…';item.style.opacity='0.6';
-        console.log('[Playlist Add] URI:',pendingAddTrackUri,'→',pl.id,pl.name);
-
-        // === Tentative 1 : JSON body — endpoint /items (API Spotify fév. 2026) ===
         const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});
-        let raw1='';
-        if(r1)try{raw1=await r1.text();}catch(e){}
-        console.log('[Playlist Add] T1 status:',r1?.status,'body:',raw1);
-
-        if(r1?.status===201||r1?.status===200){
-          toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;
-        }
-
-        // === Tentative 2 : query param (fallback) ===
-        console.log('[Playlist Add] T2 essai query param…');
+        let raw1='';if(r1)try{raw1=await r1.text();}catch(e){}
+        if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}
         const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);
-        let raw2='';
-        if(r2)try{raw2=await r2.text();}catch(e){}
-        console.log('[Playlist Add] T2 status:',r2?.status,'body:',raw2);
-
-        if(r2?.status===201||r2?.status===200){
-          toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;
-        }
-
-        // === Échec des deux — diagnostic automatique ===
+        let raw2='';if(r2)try{raw2=await r2.text();}catch(e){}
+        if(r2?.status===201||r2?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}
         item.textContent=original;item.style.opacity='1';
-        await showPlaylistError(r1?.status||r2?.status||'?', raw1||raw2, pendingAddTrackUri, pl.id);
+        await showPlaylistError(r1?.status||r2?.status||'?',raw1||raw2,pendingAddTrackUri,pl.id);
       };
       list.appendChild(item);
     }catch(e){console.error('[Playlist] render error',e);}
   });
 }
 
-// Re-auth avec show_dialog=true pour forcer le nouvel écran de consentement Spotify
 function reauthorizeSpotify(){
-  $('sp-pl-modal').classList.remove('open');
+  $('sp-pl-modal').classList.remove('open');$('sp-play-modal').classList.remove('open');
   G.token=null;G.userId=null;G.grantedScopes='';
   if(_spPoller){clearInterval(_spPoller);_spPoller=null;}
   if(_progTimer){clearInterval(_progTimer);_progTimer=null;}
@@ -608,6 +665,7 @@ function setupDJView(){
   $('sp-prev').onclick=spotifyPrev;$('sp-next').onclick=spotifyNext;
   $('btn-force-pause').onclick=()=>spotifyPause(true);
   $('sp-pl-close').onclick=()=>$('sp-pl-modal').classList.remove('open');
+  $('sp-play-close').onclick=()=>$('sp-play-modal').classList.remove('open');
   const si=$('sp-search-inp');
   si.addEventListener('input',()=>{clearTimeout(_searchDebounce);_searchDebounce=setTimeout(()=>searchSpotify(si.value),500);});
   $('sp-search-btn').onclick=()=>searchSpotify(si.value);
