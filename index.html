@@ -32,8 +32,7 @@
     input[type="text"]:focus { border-color:var(--blue); }
     input[type="text"]::placeholder { color:var(--muted); }
     .role-toggle { display:flex; background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:8px; padding:4px; gap:4px; }
-    .role-toggle button { flex:1; padding:10px; border:none; border-radius:6px; background:transparent;
-      color:var(--muted); font-size:.9rem; cursor:pointer; transition:all .2s; font-weight:500; }
+    .role-toggle button { flex:1; padding:10px; border:none; border-radius:6px; background:transparent; color:var(--muted); font-size:.9rem; cursor:pointer; transition:all .2s; font-weight:500; }
     .role-toggle button.active { background:var(--blue); color:white; font-weight:700; box-shadow:0 2px 10px rgba(124,106,247,.45); }
     .btn { width:100%; padding:14px; border:none; border-radius:8px; font-size:1rem; font-weight:700;
       cursor:pointer; transition:opacity .2s,transform .1s,box-shadow .2s; -webkit-tap-highlight-color:transparent; }
@@ -43,12 +42,11 @@
     .btn-spotify { background:var(--spotify); color:white; }
     .btn-ghost   { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
     .btn-sm { padding:10px; font-size:.88rem; }
-    .btn-warn { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.3); }
+    .btn-warn    { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.3); }
     .btn-success { background:var(--green); color:white; }
     .btn-danger  { background:var(--red); color:white; }
     .sep { width:100%; height:1px; background:var(--border); flex-shrink:0; }
     .section-label { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
-    /* DJ */
     #view-dj { flex-direction:row; max-width:none; width:100%; height:100dvh; gap:0; align-items:stretch; }
     @media(max-width:720px) { #view-dj { flex-direction:column; height:auto; overflow-y:auto; } }
     .sp-panel { flex:0 0 50%; background:#0a0810; display:flex; flex-direction:column; gap:12px; padding:16px; overflow:hidden; position:relative; }
@@ -99,7 +97,7 @@
     .sp-act-btn.play:hover { background:#1ed760; }
     .sp-act-btn.add { background:rgba(255,255,255,.1); color:white; border:1px solid rgba(255,255,255,.18); }
     .sp-act-btn.add:hover { background:rgba(255,255,255,.2); }
-    .sp-modal { position:absolute; inset:0; background:rgba(10,8,16,.92); display:none; flex-direction:column; z-index:20; padding:16px; gap:10px; }
+    .sp-modal { position:absolute; inset:0; background:rgba(10,8,16,.93); display:none; flex-direction:column; z-index:20; padding:16px; gap:10px; }
     .sp-modal.open { display:flex; }
     .sp-modal-header { display:flex; justify-content:space-between; align-items:center; }
     .sp-modal-title { font-size:.9rem; font-weight:700; color:white; }
@@ -110,9 +108,12 @@
     .sp-modal-empty { color:var(--muted); text-align:center; font-size:.82rem; padding:16px 0; }
     .sp-scope-error { text-align:center; padding:20px 12px; display:flex; flex-direction:column; align-items:center; gap:12px; }
     .sp-scope-error p { color:var(--orange); font-size:.85rem; line-height:1.5; }
-    .sp-scope-error small { color:var(--muted); font-size:.75rem; }
+    .sp-scope-error small { color:var(--muted); font-size:.75rem; line-height:1.5; }
     .sp-scope-error button { background:var(--spotify); color:white; border:none; border-radius:8px; padding:10px 18px; cursor:pointer; font-size:.85rem; font-weight:600; }
-    .sp-connected-badge { display:none; align-items:center; gap:6px; padding:6px 10px; background:rgba(29,185,84,.12); border:1px solid rgba(29,185,84,.25); border-radius:8px; color:var(--spotify); font-size:.78rem; font-weight:500; flex-shrink:0; }
+    .sp-connected-badge { display:none; align-items:center; gap:6px; padding:6px 10px; background:rgba(29,185,84,.12); border:1px solid rgba(29,185,84,.25); border-radius:8px; color:var(--spotify); font-size:.78rem; font-weight:500; }
+    /* Bouton mise à jour droits */
+    .sp-reauth-btn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:6px; color:rgba(255,255,255,.55); font-size:.72rem; padding:5px 9px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    .sp-reauth-btn:hover { background:rgba(255,255,255,.12); color:white; }
     .debug-uri-box { background:rgba(249,115,22,.08); border:1px solid rgba(249,115,22,.25); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
     .debug-uri-label { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--orange); }
     .debug-uri-value { font-size:.72rem; color:var(--text); word-break:break-all; font-family:monospace; }
@@ -139,7 +140,6 @@
     .action-row { display:none; gap:8px; }
     .action-row.visible { display:flex; }
     .action-row .btn { flex:1; }
-    /* BUZZER */
     #view-buzzer { max-width:100%; height:100dvh; justify-content:center; }
     .buzzer-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:40px; padding:40px 24px; min-height:100dvh; }
     .buzzer-player-name { font-size:1rem; color:var(--muted); font-weight:500; }
@@ -189,6 +189,8 @@
 <div id="view-dj" class="view">
   <div class="sp-panel">
     <div class="sp-bg" id="sp-bg"></div>
+
+    <!-- Non connecté -->
     <div class="sp-disconnected sp-z" id="sp-disconnected">
       <div class="sp-disco-icon">💿</div>
       <p class="sp-disco-text">Connecte Spotify pour accéder au lecteur et à la recherche</p>
@@ -199,11 +201,19 @@
         <div class="debug-uri-hint">Enregistrer exactement dans Spotify Dashboard</div>
       </div>
     </div>
+
+    <!-- Connecté -->
     <div id="sp-connected" style="display:none;flex-direction:column;gap:12px;flex:1;overflow:hidden;">
-      <div style="display:flex;gap:8px;align-items:center;" class="sp-z">
+
+      <!-- Badge + bouton mise à jour droits + force pause -->
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;" class="sp-z">
         <div class="sp-connected-badge" id="spotify-ok" style="display:flex;">✓ Spotify connecté</div>
-        <button id="btn-force-pause" class="btn btn-warn btn-sm" style="display:none;flex:1;">⏸ Forcer pause</button>
+        <!-- ✅ Bouton toujours visible pour forcer re-auth avec show_dialog=true -->
+        <button class="sp-reauth-btn" onclick="reauthorizeSpotify()" title="Mettre à jour les droits Spotify (playlists, etc.)">🔑 Droits</button>
+        <button id="btn-force-pause" class="btn btn-warn btn-sm" style="display:none;flex:1;min-width:0;">⏸ Forcer pause</button>
       </div>
+
+      <!-- Now Playing -->
       <div class="sp-now-playing sp-z">
         <div class="sp-art-placeholder-sm" id="sp-art-ph">💿</div>
         <img id="sp-art" class="sp-art-sm" src="" alt="" style="display:none;">
@@ -221,11 +231,15 @@
           <button class="sp-c" id="sp-next">⏭</button>
         </div>
       </div>
-      <div class="sp-z" id="sp-devices-section">
+
+      <!-- Appareils -->
+      <div class="sp-z">
         <div class="sp-devices" id="sp-devices-list">
-          <span class="sp-no-device" id="sp-no-device">Chargement des appareils…</span>
+          <span class="sp-no-device">Chargement des appareils…</span>
         </div>
       </div>
+
+      <!-- Recherche -->
       <div class="sp-search-section sp-z">
         <div class="sp-search-bar">
           <input class="sp-search-input" id="sp-search-inp" type="text" placeholder="🔍  Rechercher une chanson, un artiste…">
@@ -236,6 +250,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal playlists -->
     <div class="sp-modal" id="sp-pl-modal">
       <div class="sp-modal-header">
         <span class="sp-modal-title">Ajouter à une playlist</span>
@@ -244,6 +260,8 @@
       <div class="sp-modal-list" id="sp-pl-list"><p class="sp-modal-empty">Chargement…</p></div>
     </div>
   </div>
+
+  <!-- Panneau Jeu -->
   <div class="game-panel">
     <div class="room-badge" id="dj-room-code">—</div>
     <div class="share-row-c">
@@ -301,17 +319,24 @@ function b64url(buf){return btoa(String.fromCharCode(...new Uint8Array(buf))).re
 function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);return b64url(a.buffer);}
 async function genChallenge(v){return b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));}
 
-async function startSpotifyAuth(){
+// ✅ showDialog=true force Spotify à réafficher l'écran de consentement → obtient les nouveaux scopes
+async function startSpotifyAuth(showDialog=false){
   const v=genVerifier(),c=await genChallenge(v);
-  localStorage.setItem('spv',v);localStorage.setItem('sr',G.room);localStorage.setItem('sn',G.name);localStorage.setItem('spid',G.pid);localStorage.setItem('sp_ts',Date.now().toString());
-  window.location.href=`https://accounts.spotify.com/authorize?`+new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,code_challenge_method:'S256',code_challenge:c,scope:SPOTIFY_SCOPE});
+  localStorage.setItem('spv',v);localStorage.setItem('sr',G.room);
+  localStorage.setItem('sn',G.name);localStorage.setItem('spid',G.pid);localStorage.setItem('sp_ts',Date.now().toString());
+  const params={client_id:SPOTIFY_CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,
+    code_challenge_method:'S256',code_challenge:c,scope:SPOTIFY_SCOPE};
+  if(showDialog)params.show_dialog='true'; // force la fenêtre de consentement
+  window.location.href=`https://accounts.spotify.com/authorize?`+new URLSearchParams(params);
 }
 
 async function exchangeCode(code){
   const v=localStorage.getItem('spv');
   if(!v){toast('❌ Erreur OAuth — réessaie.');return null;}
   localStorage.removeItem('spv');localStorage.removeItem('sp_ts');
-  const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});
+  const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});
   if(!res.ok){let b='';try{b=await res.text();}catch(e){}toast('❌ Spotify ('+res.status+'): '+(b.includes('redirect_uri')?'Redirect URI incorrect.':b.slice(0,80)));return null;}
   return (await res.json()).access_token||null;
 }
@@ -342,7 +367,7 @@ function renderDevices(devices){
   devices.forEach(d=>{
     const btn=document.createElement('button');btn.className='sp-device-btn'+(d.is_active?' active-device':'');
     btn.textContent=(d.is_active?'▶ ':'')+d.name;
-    btn.onclick=async()=>{await transferToDevice(d.id);toast('📱 Lecture transférée vers '+d.name);setTimeout(()=>{fetchDevices().then(renderDevices);fetchSpotifyState();},1000);};
+    btn.onclick=async()=>{await transferToDevice(d.id);toast('📱 Lecture → '+d.name);setTimeout(()=>{fetchDevices().then(renderDevices);fetchSpotifyState();},1000);};
     c.appendChild(btn);
   });
 }
@@ -350,10 +375,8 @@ function renderDevices(devices){
 async function transferToDevice(deviceId,play=false){G.activeDeviceId=deviceId;return await spFetch('PUT','/me/player',{device_ids:[deviceId],play});}
 
 async function getOrActivateDevice(){
-  const devices=await fetchDevices();renderDevices(devices);
-  if(!devices.length)return null;
-  const active=devices.find(d=>d.is_active);
-  if(active){G.activeDeviceId=active.id;return active.id;}
+  const devices=await fetchDevices();renderDevices(devices);if(!devices.length)return null;
+  const active=devices.find(d=>d.is_active);if(active){G.activeDeviceId=active.id;return active.id;}
   const first=devices[0];await transferToDevice(first.id,false);G.activeDeviceId=first.id;
   await new Promise(r=>setTimeout(r,600));return first.id;
 }
@@ -439,10 +462,7 @@ function renderResults(tracks){
       <div class="sp-result-info"><div class="sp-result-name">${esc(t.name)}</div><div class="sp-result-artist">${esc(t.artists?.map(a=>a.name).join(', ')||'')}</div></div>
       <div class="sp-result-acts"><button class="sp-act-btn play">▶</button><button class="sp-act-btn add">+</button></div>`;
     row.querySelector('.play').onclick=()=>spotifyPlay(t.uri);
-    row.querySelector('.add').onclick=()=>{
-      console.log('[Search] URI du titre sélectionné :', t.uri);
-      openPlaylistModal(t.uri);
-    };
+    row.querySelector('.add').onclick=()=>{console.log('[+] URI:',t.uri);openPlaylistModal(t.uri);};
     c.appendChild(row);
   });
 }
@@ -451,19 +471,16 @@ function esc(s){const d=document.createElement('div');d.textContent=s;return d.i
 
 // ── Playlists ─────────────────────────────────────────────────
 async function openPlaylistModal(trackUri){
-  // ✅ Validation de l'URI avant tout
-  console.log('[Playlist Modal] trackUri reçu :', trackUri);
+  console.log('[Playlist Modal] trackUri:', trackUri);
   if(!trackUri||typeof trackUri!=='string'||!trackUri.startsWith('spotify:')){
-    toast('⚠️ URI de titre invalide : '+String(trackUri), 6000);
-    return;
+    toast('⚠️ URI invalide : '+String(trackUri),6000);return;
   }
-
   pendingAddTrackUri=trackUri;
   $('sp-pl-modal').classList.add('open');
   $('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';
 
   const userId=await ensureUserId();
-  console.log('[Playlist Modal] userId :', userId);
+  console.log('[Playlist Modal] userId:', userId);
 
   const res=await spFetch('GET','/me/playlists?limit=50');
   if(!res){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Erreur réseau</p>';return;}
@@ -471,15 +488,12 @@ async function openPlaylistModal(trackUri){
     $('sp-pl-list').innerHTML=`<div class="sp-scope-error"><p>⚠️ Droits manquants (${res.status})</p><small>Re-connecte Spotify pour autoriser les playlists</small><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;
     return;
   }
-  if(res.status!==200){$('sp-pl-list').innerHTML=`<p class="sp-modal-empty">⚠️ Erreur Spotify (${res.status})</p>`;return;}
+  if(res.status!==200){$('sp-pl-list').innerHTML=`<p class="sp-modal-empty">⚠️ Erreur (${res.status})</p>`;return;}
 
   let json;try{json=await res.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Réponse illisible</p>';return;}
   const all=json.items||[];
-  console.log('[Playlist Modal] Playlists reçues :', all.length);
-
-  // Playlists proprio OU collaboratives
   const owned=all.filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));
-  console.log('[Playlist Modal] Playlists filtrées (proprio/collab) :', owned.length, owned.map(p=>p.name));
+  console.log('[Playlist Modal] Playlists éditables:', owned.length, owned.map(p=>p.name));
 
   const list=$('sp-pl-list');list.innerHTML='';
   if(!owned.length){
@@ -494,55 +508,48 @@ async function openPlaylistModal(trackUri){
       item.onclick=async()=>{
         const original=item.textContent;
         item.textContent='⏳ Ajout en cours…';item.style.opacity='0.6';
-
-        // ✅ Log complet avant l'appel
-        console.log('[Playlist Add] URI:', pendingAddTrackUri, '→ playlist:', pl.id, pl.name);
-
+        console.log('[Playlist Add] URI:',pendingAddTrackUri,'→',pl.id,pl.name);
         const r=await spFetch('POST',`/playlists/${pl.id}/tracks`,{uris:[pendingAddTrackUri]});
-
-        if(!r){
-          toast('⚠️ Erreur réseau lors de l\'ajout');
-          item.textContent=original;item.style.opacity='1';return;
-        }
-
-        // ✅ Lire le body brut AVANT de vérifier le status
-        let rawBody='';
-        try{rawBody=await r.text();}catch(e){}
-        console.log('[Playlist Add] Status:', r.status, '| Body:', rawBody);
-
+        if(!r){toast('⚠️ Erreur réseau');item.textContent=original;item.style.opacity='1';return;}
+        // Lire le body brut en premier
+        let rawBody='';try{rawBody=await r.text();}catch(e){}
+        console.log('[Playlist Add] Status:',r.status,'Body:',rawBody);
         if(r.status===201||r.status===200){
-          toast('✅ Ajouté à "'+pl.name+'" !');
-          $('sp-pl-modal').classList.remove('open');
+          toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');
+        } else if(r.status===403){
+          // ✅ Afficher le bouton de re-auth directement dans la modal
+          let detail='';try{detail=JSON.parse(rawBody).error?.message||'';}catch(e){}
+          $('sp-pl-list').innerHTML=`<div class="sp-scope-error">
+            <p>⚠️ Erreur 403 — Droits insuffisants</p>
+            <small>${detail||'Le token Spotify ne possède pas les droits playlist-modify.'}<br>Clique sur "Re-autoriser" pour obtenir les bons droits.</small>
+            <button onclick="reauthorizeSpotify()">🔗 Re-autoriser Spotify</button>
+          </div>`;
         } else {
-          // Extraire le message d'erreur Spotify
-          let errMsg='';
-          try{const j=JSON.parse(rawBody);errMsg=j.error?.message||'';}catch(e){}
-          const display=errMsg||rawBody.slice(0,100)||'(pas de détail)';
-          toast('⚠️ Erreur '+r.status+' — '+display, 8000);
+          let errMsg='';try{errMsg=JSON.parse(rawBody).error?.message||'';}catch(e){}
+          toast('⚠️ Erreur '+r.status+(errMsg?' — '+errMsg:rawBody?' — '+rawBody.slice(0,80):''),8000);
           item.textContent=original;item.style.opacity='1';
         }
       };
       list.appendChild(item);
-    }catch(e){console.error('[Playlist] Render error',e);}
+    }catch(e){console.error('[Playlist] render error',e);}
   });
 }
 
+// ✅ Re-auth avec show_dialog=true → force Spotify à réafficher le consentement → nouveaux scopes garantis
 function reauthorizeSpotify(){
-  $('sp-pl-modal').classList.remove('open');G.token=null;G.userId=null;
-  if(_spPoller){clearInterval(_spPoller);_spPoller=null;}if(_progTimer){clearInterval(_progTimer);_progTimer=null;}
-  $('sp-connected').style.display='none';$('sp-disconnected').style.display='flex';
-  $('debug-uri-value').textContent=REDIRECT_URI;$('debug-uri-box').style.display='';
-  $('btn-spotify').onclick=startSpotifyAuth;toast('Déconnecté — reconnecte Spotify pour re-autoriser',6000);
+  $('sp-pl-modal').classList.remove('open');
+  G.token=null;G.userId=null;
+  if(_spPoller){clearInterval(_spPoller);_spPoller=null;}
+  if(_progTimer){clearInterval(_progTimer);_progTimer=null;}
+  // Déclencher directement l'auth avec show_dialog=true (pas besoin de passer par l'accueil)
+  toast('🔄 Redirection vers Spotify pour re-autoriser…',3000);
+  setTimeout(()=>startSpotifyAuth(true),800);
 }
 
 // ── Firebase ──────────────────────────────────────────────────
 function rRef(path){return db.ref(`rooms/${G.room}${path?'/'+path:''}`);}
 function joinRoom(){const ref=rRef(`players/${G.pid}`);ref.set({name:G.name,role:G.role,at:Date.now()});ref.onDisconnect().remove();}
-
-async function doBuzz(){
-  const r=await rRef('buzzedBy').transaction(cur=>{if(cur!==null&&cur!==undefined)return undefined;return G.pid;});
-  if(r.committed)rRef().update({buzzedBy:G.pid,status:'buzzed'});return r.committed;
-}
+async function doBuzz(){const r=await rRef('buzzedBy').transaction(cur=>{if(cur!==null&&cur!==undefined)return undefined;return G.pid;});if(r.committed)rRef().update({buzzedBy:G.pid,status:'buzzed'});return r.committed;}
 
 let lastPlayers={};
 async function awardPoint(){const w=G.currentBuzzedBy;if(!w)return;await rRef(`scores/${w}`).transaction(cur=>(cur||0)+1);await rRef().update({buzzedBy:null,status:'waiting',penalties:null});G.roundPaused=false;toast('🏆 Point accordé à '+(lastPlayers[w]?.name||'joueur')+' !');}
