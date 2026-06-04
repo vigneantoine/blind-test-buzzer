@@ -9,20 +9,12 @@
   <title>Le Jeu des Disques</title>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --bg:#0c0c0c; --s1:#141414; --s2:#1c1c1c; --s3:#242424;
-      --border:#2a2a2a; --border2:#333;
-      --text:#f0f0f0; --muted:#777; --grey:#aaa;
-      --gold:#c8900a; --gold2:#e8a80c; --gold-bg:rgba(200,144,10,.1); --gold-border:rgba(200,144,10,.3);
-      --green:#22c55e; --red:#e03535; --spotify:#1DB954;
-    }
+    :root{--bg:#0c0c0c;--s1:#141414;--s2:#1c1c1c;--s3:#242424;--border:#2a2a2a;--border2:#333;--text:#f0f0f0;--muted:#777;--grey:#aaa;--gold:#c8900a;--gold2:#e8a80c;--gold-bg:rgba(200,144,10,.1);--gold-border:rgba(200,144,10,.3);--green:#22c55e;--red:#e03535;--spotify:#1DB954;}
     html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
     body{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:24px;}
     body.dj-mode{padding:0;align-items:stretch;justify-content:stretch;overflow:hidden;}
     .view{display:none;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:400px;}
     .view.active{display:flex;}
-
-    /* ── Accueil ── */
     .app-logo{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;}
     .app-logo .vinyl{font-size:4rem;filter:drop-shadow(0 0 24px rgba(200,144,10,.5));}
     .app-logo h1{font-size:1.9rem;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -43,14 +35,9 @@
     .btn-sm{padding:11px;font-size:.85rem;}
     .btn-success{background:var(--green);color:#000;}
     .btn-danger{background:var(--red);color:white;}
-    .sep{width:100%;height:1px;background:var(--border);}
     .label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
-
-    /* ── DJ layout ── */
     #view-dj{flex-direction:row;max-width:none;width:100%;height:100dvh;gap:0;align-items:stretch;}
     @media(max-width:720px){#view-dj{flex-direction:column;height:auto;overflow-y:auto;}}
-
-    /* ── Spotify panel (gauche) ── */
     .sp-panel{flex:0 0 50%;background:#080808;display:flex;flex-direction:column;gap:10px;padding:16px;overflow:hidden;position:relative;}
     @media(max-width:720px){.sp-panel{flex:none;min-height:50vh;}}
     .sp-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(90px) brightness(.15) saturate(2);transform:scale(1.1);transition:background-image 1s;pointer-events:none;z-index:0;}
@@ -58,8 +45,6 @@
     .sp-disconnected{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1;justify-content:center;text-align:center;}
     .sp-disco-icon{font-size:3.5rem;opacity:.2;}
     .sp-disco-text{color:var(--muted);font-size:.85rem;max-width:220px;line-height:1.5;}
-
-    /* Now playing */
     .sp-now-playing{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;flex-shrink:0;}
     .sp-art-sm{width:58px;height:58px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--s2);display:block;}
     .sp-art-ph{width:58px;height:58px;border-radius:6px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:#444;}
@@ -74,20 +59,17 @@
     .sp-c{background:none;border:none;color:rgba(255,255,255,.6);font-size:1rem;cursor:pointer;padding:5px;border-radius:50%;transition:color .2s;-webkit-tap-highlight-color:transparent;}
     .sp-c:hover{color:white;}
     .sp-c.main{font-size:1.5rem;color:white;}
-
-    /* Next track */
     .sp-next{display:none;flex-direction:row;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;flex-shrink:0;}
     .sp-next-lbl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.25);white-space:nowrap;}
     .sp-next-art{width:28px;height:28px;border-radius:3px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.08);}
     .sp-next-name{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .sp-next-art2{font-size:.65rem;color:rgba(255,255,255,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-    /* Badge + reauth */
     .sp-badge{display:none;align-items:center;gap:6px;padding:5px 10px;background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.2);border-radius:6px;color:var(--spotify);font-size:.72rem;font-weight:600;}
     .sp-reauth{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45);font-size:.7rem;padding:5px 9px;cursor:pointer;transition:all .2s;}
     .sp-reauth:hover{color:white;background:rgba(255,255,255,.1);}
-
-    /* Tabs */
+    .sp-notif{background:rgba(200,144,10,.08);border:1px solid rgba(200,144,10,.2);border-radius:6px;color:rgba(200,144,10,.7);font-size:.7rem;padding:5px 9px;cursor:pointer;transition:all .2s;}
+    .sp-notif:hover{color:var(--gold2);}
+    .sp-notif.ok{color:var(--gold2);opacity:.5;pointer-events:none;}
     .sp-tabs{display:flex;gap:5px;flex-shrink:0;}
     .sp-tab{flex:1;padding:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;color:rgba(255,255,255,.4);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500;}
     .sp-tab.active{background:var(--gold-bg);border-color:var(--gold-border);color:var(--gold2);font-weight:700;}
@@ -112,9 +94,6 @@
     .sp-act.play{background:var(--spotify);color:white;}
     .sp-act.play:hover{background:#1ed760;}
     .sp-act.add{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.14);}
-    .sp-act.add:hover{background:rgba(255,255,255,.15);}
-
-    /* Add-to-playlist modal */
     .sp-modal{position:absolute;inset:0;background:rgba(8,8,8,.95);display:none;flex-direction:column;z-index:20;padding:16px;gap:10px;}
     .sp-modal.open{display:flex;}
     .sp-modal-hd{display:flex;justify-content:space-between;align-items:center;}
@@ -129,9 +108,7 @@
     .sp-err .err-b{font-family:monospace;font-size:.68rem;color:#bbb;word-break:break-all;text-align:left;background:rgba(255,255,255,.05);border-radius:5px;padding:8px;width:100%;}
     .sp-err .err-d{font-size:.68rem;color:var(--muted);text-align:left;width:100%;line-height:1.8;background:rgba(255,255,255,.03);border-radius:5px;padding:8px;border:1px solid rgba(255,255,255,.07);}
     .sp-err button{background:var(--spotify);color:white;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;font-size:.82rem;font-weight:600;}
-
-    /* ── Game panel (droite) ── */
-    .game-panel{flex:0 0 50%;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden;}
+    .game-panel{flex:0 0 50%;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
     @media(max-width:720px){.game-panel{flex:none;border-left:none;border-top:1px solid var(--border);}}
     .gp-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
     .room-code{font-size:1.3rem;font-weight:800;letter-spacing:4px;color:var(--gold2);}
@@ -139,27 +116,35 @@
     .share-url{flex:1;font-size:.68rem;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .share-copy{padding:5px 10px;background:var(--s3);border:1px solid var(--border2);border-radius:6px;color:var(--grey);font-size:.7rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
     .share-copy:hover{color:white;border-color:var(--gold-border);}
-    .gp-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0;}
-
-    /* Buzz block */
+    .gp-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+    /* Buzz block inline (desktop) */
     .buzz-block{display:none;flex-direction:column;gap:10px;margin:16px 20px 0;padding:14px 16px;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;}
     .buzz-block.visible{display:flex;}
+    @media(max-width:720px){.buzz-block{display:none !important;}} /* remplacé par l'overlay sur mobile */
     .buzz-who{display:flex;align-items:center;gap:8px;}
-    .buzz-icon{font-size:1.3rem;}
+    .buzz-icon-sm{font-size:1.3rem;}
     .buzz-detail{display:flex;flex-direction:column;gap:1px;}
     .buzz-pname{font-size:1rem;font-weight:800;color:var(--gold2);}
     .buzz-sub{font-size:.7rem;color:var(--muted);}
     .buzz-actions{display:flex;gap:8px;}
     .buzz-actions .btn{flex:1;}
-
+    /* Buzz overlay (mobile) */
+    .buzz-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(8,8,8,.97);flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:32px;text-align:center;}
+    .buzz-overlay.active{display:flex;}
+    @media(min-width:721px){.buzz-overlay{display:none !important;}}
+    .buzz-ov-ring{width:110px;height:110px;border-radius:50%;background:var(--gold-bg);border:2px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:3rem;animation:buzz-in .35s cubic-bezier(.175,.885,.32,1.275);}
+    @keyframes buzz-in{0%{transform:scale(0.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
+    .buzz-ov-name{font-size:2.4rem;font-weight:900;color:var(--gold2);line-height:1.1;animation:buzz-in .35s .1s both cubic-bezier(.175,.885,.32,1.275);}
+    .buzz-ov-sub{font-size:.95rem;color:var(--muted);animation:buzz-in .3s .2s both;}
+    .buzz-ov-actions{display:flex;gap:12px;width:100%;max-width:320px;margin-top:8px;animation:buzz-in .3s .25s both;}
+    .buzz-ov-actions .btn{flex:1;padding:16px;font-size:1rem;}
     /* Leaderboard */
     .lb-section{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
     .lb-header{display:flex;justify-content:space-between;align-items:center;}
     .lb-count{font-size:.7rem;color:var(--muted);}
     .lb-list{display:flex;flex-direction:column;gap:6px;}
     .lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px;}
-    .lb-rank{width:20px;text-align:center;font-size:.72rem;font-weight:800;color:var(--muted);flex-shrink:0;}
-    .lb-rank.top{color:var(--gold2);}
+    .lb-rank{width:22px;text-align:center;font-size:.8rem;flex-shrink:0;}
     .lb-name{flex:1;font-size:.88rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .lb-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;min-width:60px;}
     .lb-pts{font-size:.72rem;font-weight:800;color:var(--muted);}
@@ -167,11 +152,8 @@
     .lb-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
     .lb-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .5s ease;}
     .lb-waiting{color:var(--muted);font-size:.82rem;text-align:center;padding:16px 0;}
-
-    /* Reset button */
     .gp-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;}
-
-    /* ── Buzzer view ── */
+    /* Buzzer */
     #view-buzzer{max-width:100%;height:100dvh;justify-content:center;}
     .buzzer-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:40px 24px;min-height:100dvh;}
     .buzzer-pname{font-size:.9rem;color:var(--muted);font-weight:500;letter-spacing:.5px;}
@@ -181,13 +163,23 @@
     #buzzer-btn.red{background:linear-gradient(135deg,#7f1d1d,#ef4444);box-shadow:0 0 0 12px rgba(239,68,68,.08),0 0 50px rgba(239,68,68,.2);cursor:default;}
     #buzzer-btn.penalty{font-size:2.8rem;letter-spacing:0;}
     #buzzer-status{font-size:1rem;text-align:center;font-weight:500;color:var(--muted);min-height:1.5em;max-width:260px;line-height:1.5;}
-
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:10px 20px;border-radius:100px;font-size:.84rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;max-width:90vw;text-align:center;}
     #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
 <div id="toast"></div>
+
+<!-- Buzz overlay mobile (par-dessus tout) -->
+<div class="buzz-overlay" id="buzz-overlay">
+  <div class="buzz-ov-ring">⚡</div>
+  <div class="buzz-ov-name" id="buzz-ov-name">—</div>
+  <div class="buzz-ov-sub">a wizzé en premier !</div>
+  <div class="buzz-ov-actions">
+    <button class="btn btn-success" onclick="awardPoint()">✅ Gagné</button>
+    <button class="btn btn-danger" onclick="penalizePlayer()">❌ Perdu</button>
+  </div>
+</div>
 
 <!-- ACCUEIL -->
 <div id="view-home" class="view active">
@@ -212,18 +204,17 @@
 
 <!-- VUE DJ -->
 <div id="view-dj" class="view">
-
-  <!-- Panneau Spotify -->
   <div class="sp-panel">
     <div class="sp-bg" id="sp-bg"></div>
     <div class="sp-disconnected sp-z" id="sp-disconnected">
       <div class="sp-disco-icon">💿</div>
-      <p class="sp-disco-text">Connecte Spotify pour accéder au lecteur et à la recherche</p>
+      <p class="sp-disco-text">Connecte Spotify pour accéder au lecteur</p>
       <button id="btn-spotify" class="btn btn-spotify" style="max-width:250px;">🔗 Connecter Spotify</button>
     </div>
     <div id="sp-connected" style="display:none;flex-direction:column;gap:10px;flex:1;overflow:hidden;">
-      <div style="display:flex;gap:6px;align-items:center;" class="sp-z">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;" class="sp-z">
         <div class="sp-badge" id="spotify-ok" style="display:flex;">✓ Connecté</div>
+        <button class="sp-notif" id="notif-btn" onclick="requestNotifPermission()" title="Recevoir une alerte si tu quittes l'app">🔔 Alertes</button>
         <button class="sp-reauth" onclick="reauthorizeSpotify()">🔑 Droits</button>
       </div>
       <div class="sp-now-playing sp-z">
@@ -246,10 +237,7 @@
       <div class="sp-next sp-z" id="sp-next-track">
         <span class="sp-next-lbl">Suivant</span>
         <img id="sp-next-art" class="sp-next-art" src="" alt="">
-        <div style="min-width:0;flex:1;">
-          <div class="sp-next-name" id="sp-next-name"></div>
-          <div class="sp-next-art2" id="sp-next-artist"></div>
-        </div>
+        <div style="min-width:0;flex:1;"><div class="sp-next-name" id="sp-next-name"></div><div class="sp-next-art2" id="sp-next-artist"></div></div>
       </div>
       <div class="sp-search-section sp-z">
         <div class="sp-tabs">
@@ -269,15 +257,10 @@
       </div>
     </div>
     <div class="sp-modal" id="sp-pl-modal">
-      <div class="sp-modal-hd">
-        <span class="sp-modal-ttl">Ajouter à une playlist</span>
-        <button class="sp-modal-x" id="sp-pl-close">✕</button>
-      </div>
+      <div class="sp-modal-hd"><span class="sp-modal-ttl">Ajouter à une playlist</span><button class="sp-modal-x" id="sp-pl-close">✕</button></div>
       <div class="sp-modal-list" id="sp-pl-list"><p class="sp-modal-empty">Chargement…</p></div>
     </div>
   </div>
-
-  <!-- Panneau jeu -->
   <div class="game-panel">
     <div class="gp-header">
       <div class="room-code" id="dj-room-code">—</div>
@@ -287,34 +270,16 @@
       </div>
     </div>
     <div class="gp-body">
-      <!-- Bloc buzz — au-dessus du leaderboard -->
       <div class="buzz-block" id="buzz-block">
-        <div class="buzz-who">
-          <span class="buzz-icon">⚡</span>
-          <div class="buzz-detail">
-            <div class="buzz-pname" id="buzz-pname">—</div>
-            <div class="buzz-sub">a wizzé en premier !</div>
-          </div>
-        </div>
-        <div class="buzz-actions">
-          <button id="btn-gagner" class="btn btn-success btn-sm">✅ Gagné</button>
-          <button id="btn-perdu" class="btn btn-danger btn-sm">❌ Perdu</button>
-        </div>
+        <div class="buzz-who"><span class="buzz-icon-sm">⚡</span><div class="buzz-detail"><div class="buzz-pname" id="buzz-pname">—</div><div class="buzz-sub">a wizzé en premier !</div></div></div>
+        <div class="buzz-actions"><button id="btn-gagner" class="btn btn-success btn-sm">✅ Gagné</button><button id="btn-perdu" class="btn btn-danger btn-sm">❌ Perdu</button></div>
       </div>
-      <!-- Leaderboard -->
       <div class="lb-section">
-        <div class="lb-header">
-          <span class="label">Classement</span>
-          <span class="lb-count" id="lb-count"></span>
-        </div>
-        <div class="lb-list" id="players-list">
-          <p class="lb-waiting">En attente des joueurs…</p>
-        </div>
+        <div class="lb-header"><span class="label">Classement</span><span class="lb-count" id="lb-count"></span></div>
+        <div class="lb-list" id="players-list"><p class="lb-waiting">En attente des joueurs…</p></div>
       </div>
     </div>
-    <div class="gp-footer">
-      <button id="reset-btn" class="btn btn-ghost btn-sm">🔄 Nouvelle manche</button>
-    </div>
+    <div class="gp-footer"><button id="reset-btn" class="btn btn-ghost btn-sm">🔄 Nouvelle manche</button></div>
   </div>
 </div>
 
@@ -335,7 +300,7 @@ const FIREBASE_CONFIG={apiKey:'AIzaSyB1wKfBPXkdvw7IDCVzggxHUM0efNFXK_E',authDoma
 const REDIRECT_URI=window.location.origin+window.location.pathname;
 const SPOTIFY_SCOPE='user-modify-playback-state user-read-playback-state user-read-currently-playing playlist-read-private playlist-modify-public playlist-modify-private';
 let G={room:null,name:null,role:'guesser',pid:null,token:null,roundPaused:false,currentBuzzedBy:null,isPlaying:false,userId:null,activeDeviceId:null,grantedScopes:''};
-let pendingAddTrackUri=null;
+let pendingAddTrackUri=null,_lastBuzzedBy=null;
 firebase.initializeApp(FIREBASE_CONFIG);
 const db=firebase.database();
 const $=id=>document.getElementById(id);
@@ -349,6 +314,44 @@ function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);retu
 async function genChallenge(v){return b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
+// ── Wake Lock ─────────────────────────────────────────────────
+let _wl=null;
+async function acquireWakeLock(){
+  if(!('wakeLock' in navigator))return;
+  try{_wl=await navigator.wakeLock.request('screen');_wl.addEventListener('release',()=>{_wl=null;});}catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G.role==='dj'&&!_wl)acquireWakeLock();});
+
+// ── Audio buzz ────────────────────────────────────────────────
+let _actx=null;
+function getACtx(){if(!_actx)try{_actx=new AudioContext();}catch(e){}return _actx;}
+function playBuzz(){
+  const ctx=getACtx();if(!ctx)return;
+  try{
+    if(ctx.state==='suspended')ctx.resume();
+    const ding=(t)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=1320;g.gain.setValueAtTime(0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.start(t);o.stop(t+0.4);};
+    ding(ctx.currentTime);ding(ctx.currentTime+0.22);
+  }catch(e){}
+}
+
+// ── Notifications ─────────────────────────────────────────────
+async function requestNotifPermission(){
+  if(!('Notification' in window)){toast('⚠️ Notifications non supportées sur ce navigateur');return;}
+  const p=await Notification.requestPermission();
+  if(p==='granted'){toast('🔔 Alertes activées — tu seras notifié même hors de l\'app !');$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}
+  else toast('⚠️ Alertes refusées — active dans les réglages du navigateur');
+}
+function showBuzzNotif(name){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{
+    const n=new Notification('⚡ WIZZ !',{body:name+' a wizzé en premier !',tag:'buzz',renotify:true,requireInteraction:true});
+    n.onclick=()=>{window.focus();n.close();};
+    // fermer auto après 30s si pas cliqué
+    setTimeout(()=>n.close(),30000);
+  }catch(e){}
+}
+
+// ── Spotify auth ──────────────────────────────────────────────
 async function startSpotifyAuth(showDialog=false){
   const v=genVerifier(),c=await genChallenge(v);
   localStorage.setItem('spv',v);localStorage.setItem('sr',G.room);localStorage.setItem('sn',G.name);localStorage.setItem('spid',G.pid);localStorage.setItem('sp_ts',Date.now().toString());
@@ -392,7 +395,7 @@ async function playPlaylist(id,name){
   if(r.status===404){const dId=await getActiveDevice();if(!dId){toast('⚠️ Ouvre Spotify');return;}r=await spFetch('PUT','/me/player/play',{...body,device_id:dId});}
   if(!r)return;
   if(r.status===204||r.status===202){G.isPlaying=true;$('sp-pp').textContent='⏸';toast('▶ '+name);setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}
-  else toast('⚠️ Erreur lecture playlist ('+r.status+')');
+  else toast('⚠️ Erreur ('+r.status+')');
 }
 async function spotifyNext(){await spFetch('POST','/me/player/next');setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}
 async function spotifyPrev(){await spFetch('POST','/me/player/previous');setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}
@@ -443,14 +446,7 @@ async function loadPlTab(){
   let json;try{json=await r.json();}catch(e){c.innerHTML='<p class="sp-empty">⚠️ Illisible</p>';return;}
   const pls=json.items||[];c.innerHTML='';
   if(!pls.length){c.innerHTML='<p class="sp-empty">Aucune playlist</p>';return;}
-  pls.forEach(pl=>{
-    if(!pl||!pl.id)return;
-    const row=document.createElement('div');row.className='sp-row';
-    const art=pl.images?.[0]?.url||'';
-    row.innerHTML=`<img class="sp-row-art" src="${art}" alt="" onerror="this.style.display='none'"><div class="sp-row-info"><div class="sp-row-name">${esc(pl.name)}</div><div class="sp-row-sub">${pl.tracks?.total??'?'} titres</div></div><button class="sp-act play">▶</button>`;
-    row.querySelector('.play').onclick=()=>playPlaylist(pl.id,pl.name);
-    c.appendChild(row);
-  });
+  pls.forEach(pl=>{if(!pl||!pl.id)return;const row=document.createElement('div');row.className='sp-row';const art=pl.images?.[0]?.url||'';row.innerHTML=`<img class="sp-row-art" src="${art}" alt="" onerror="this.style.display='none'"><div class="sp-row-info"><div class="sp-row-name">${esc(pl.name)}</div><div class="sp-row-sub">${pl.tracks?.total??'?'} titres</div></div><button class="sp-act play">▶</button>`;row.querySelector('.play').onclick=()=>playPlaylist(pl.id,pl.name);c.appendChild(row);});
 }
 
 // ── Recherche ─────────────────────────────────────────────────
@@ -460,30 +456,17 @@ async function searchSpotify(q){
   $('sp-results').innerHTML='<p class="sp-empty">Recherche…</p>';
   const r=await spFetch('GET',`/search?q=${encodeURIComponent(q)}&type=track&limit=10`);
   if(!r||r.status!==200){$('sp-results').innerHTML='<p class="sp-empty">Erreur ('+r?.status+')</p>';return;}
-  const tracks=(await r.json()).tracks?.items||[];
-  const c=$('sp-results');if(!tracks.length){c.innerHTML='<p class="sp-empty">Aucun résultat</p>';return;}
+  const tracks=(await r.json()).tracks?.items||[];const c=$('sp-results');
+  if(!tracks.length){c.innerHTML='<p class="sp-empty">Aucun résultat</p>';return;}
   c.innerHTML='';
-  tracks.forEach(t=>{
-    const art=t.album?.images?.[2]?.url||t.album?.images?.[0]?.url||'';
-    const row=document.createElement('div');row.className='sp-row';
-    row.innerHTML=`<img class="sp-row-art" src="${art}" alt=""><div class="sp-row-info"><div class="sp-row-name">${esc(t.name)}</div><div class="sp-row-sub">${esc(t.artists?.map(a=>a.name).join(', ')||'')}</div></div><div class="sp-row-acts"><button class="sp-act play">▶</button><button class="sp-act add">+</button></div>`;
-    row.querySelector('.play').onclick=()=>spotifyPlay(t.uri);
-    row.querySelector('.add').onclick=()=>openPlModal(t.uri);
-    c.appendChild(row);
-  });
+  tracks.forEach(t=>{const art=t.album?.images?.[2]?.url||t.album?.images?.[0]?.url||'';const row=document.createElement('div');row.className='sp-row';row.innerHTML=`<img class="sp-row-art" src="${art}" alt=""><div class="sp-row-info"><div class="sp-row-name">${esc(t.name)}</div><div class="sp-row-sub">${esc(t.artists?.map(a=>a.name).join(', ')||'')}</div></div><div class="sp-row-acts"><button class="sp-act play">▶</button><button class="sp-act add">+</button></div>`;row.querySelector('.play').onclick=()=>spotifyPlay(t.uri);row.querySelector('.add').onclick=()=>openPlModal(t.uri);c.appendChild(row);});
 }
 
 // ── Add-to-playlist modal ─────────────────────────────────────
 async function showPlError(status,raw,trackUri,plId){
   const disp=raw||'(vide)';let diag='';
-  if(status===403){
-    $('sp-pl-list').innerHTML='<div class="sp-err"><p>⏳ Diagnostic…</p></div>';
-    try{const[pr,mr]=await Promise.all([spFetch('GET',`/playlists/${plId}?fields=public,collaborative,owner`),spFetch('GET','/me')]);
-    const pd=pr?.status===200?await pr.json():null,md=mr?.status===200?await mr.json():null;
-    const pub=pd?.public,own=pd?.owner?.id||'?',me=md?.id||G.userId||'?';
-    const ns=pub?'playlist-modify-public':'playlist-modify-private',sc=G.grantedScopes||'';
-    const ok=sc.includes('playlist-modify-public')&&sc.includes('playlist-modify-private');
-    diag=`<div class="err-d">📋 ${pub?'publique':pub===false?'privée':'?'} · ${own===me?'✅ tu es proprio':'❌ pas toi'}<br>${ok?'✅ Scopes OK':'❌ Scope manquant: '+esc(ns)}</div>`;}
+  if(status===403){$('sp-pl-list').innerHTML='<div class="sp-err"><p>⏳ Diagnostic…</p></div>';
+    try{const[pr,mr]=await Promise.all([spFetch('GET',`/playlists/${plId}?fields=public,collaborative,owner`),spFetch('GET','/me')]);const pd=pr?.status===200?await pr.json():null,md=mr?.status===200?await mr.json():null;const pub=pd?.public,own=pd?.owner?.id||'?',me=md?.id||G.userId||'?';const ns=pub?'playlist-modify-public':'playlist-modify-private',sc=G.grantedScopes||'';const ok=sc.includes('playlist-modify-public')&&sc.includes('playlist-modify-private');diag=`<div class="err-d">📋 ${pub?'publique':pub===false?'privée':'?'} · ${own===me?'✅ tu es proprio':'❌ pas toi'}<br>${ok?'✅ Scopes OK':'❌ Scope manquant: '+esc(ns)}</div>`;}
     catch(e){diag='<div class="err-d">⚠️ Diagnostic échoué</div>';}
   }
   $('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur ${status}</p><div class="err-b">${esc(disp)}</div>${diag}<button onclick="reauthorizeSpotify()">🔗 Re-autoriser</button></div>`;
@@ -491,30 +474,17 @@ async function showPlError(status,raw,trackUri,plId){
 async function openPlModal(trackUri){
   if(!trackUri||!trackUri.startsWith('spotify:')){toast('⚠️ URI invalide');return;}
   pendingAddTrackUri=trackUri;$('sp-pl-modal').classList.add('open');$('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';
-  const userId=await ensureUserId();
-  const r=await spFetch('GET','/me/playlists?limit=50');
+  const userId=await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');
   if(!r||r.status!==200){$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur (${r?.status})</p><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;return;}
   let json;try{json=await r.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Illisible</p>';return;}
   const owned=(json.items||[]).filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));
   const list=$('sp-pl-list');list.innerHTML='';
   if(!owned.length){list.innerHTML='<p class="sp-modal-empty">Aucune playlist modifiable</p>';return;}
-  owned.forEach(pl=>{
-    try{const item=document.createElement('div');item.className='sp-modal-item';
-    item.textContent='💿 '+pl.name+' ('+(pl.tracks?.total??'?')+' titres)';
-    item.onclick=async()=>{const orig=item.textContent;item.textContent='⏳…';item.style.opacity='.6';
-    const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});let raw1='';if(r1)try{raw1=await r1.text();}catch(e){}
-    if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}
-    const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);let raw2='';if(r2)try{raw2=await r2.text();}catch(e){}
-    if(r2?.status===201||r2?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}
-    item.textContent=orig;item.style.opacity='1';await showPlError(r1?.status||r2?.status||'?',raw1||raw2,pendingAddTrackUri,pl.id);};
-    list.appendChild(item);}catch(e){}
-  });
+  owned.forEach(pl=>{try{const item=document.createElement('div');item.className='sp-modal-item';item.textContent='💿 '+pl.name+' ('+(pl.tracks?.total??'?')+' titres)';
+  item.onclick=async()=>{const orig=item.textContent;item.textContent='⏳…';item.style.opacity='.6';const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});let raw1='';if(r1)try{raw1=await r1.text();}catch(e){}if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);let raw2='';if(r2)try{raw2=await r2.text();}catch(e){}if(r2?.status===201||r2?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}item.textContent=orig;item.style.opacity='1';await showPlError(r1?.status||r2?.status||'?',raw1||raw2,pendingAddTrackUri,pl.id);};
+  list.appendChild(item);}catch(e){}});
 }
-function reauthorizeSpotify(){
-  $('sp-pl-modal').classList.remove('open');G.token=null;G.userId=null;G.grantedScopes='';
-  if(_poller){clearInterval(_poller);_poller=null;}if(_progTimer){clearInterval(_progTimer);_progTimer=null;}
-  toast('🔄 Redirection…',3000);setTimeout(()=>startSpotifyAuth(true),800);
-}
+function reauthorizeSpotify(){$('sp-pl-modal').classList.remove('open');G.token=null;G.userId=null;G.grantedScopes='';if(_poller){clearInterval(_poller);_poller=null;}if(_progTimer){clearInterval(_progTimer);_progTimer=null;}toast('🔄 Redirection…',3000);setTimeout(()=>startSpotifyAuth(true),800);}
 
 // ── Firebase ──────────────────────────────────────────────────
 function rRef(path){return db.ref(`rooms/${G.room}${path?'/'+path:''}`);}
@@ -531,19 +501,20 @@ function renderLeaderboard(guessers,scores){
   $('lb-count').textContent=guessers.length+' joueur'+(guessers.length>1?'s':'');
   const sorted=[...guessers].sort(([a],[b])=>(scores[b]||0)-(scores[a]||0));
   const maxPts=Math.max(1,...sorted.map(([id])=>scores[id]||0));
+  const medals=['🥇','🥈','🥉'];
   sorted.forEach(([id,p],i)=>{
-    const pts=scores[id]||0,pct=pts>0?Math.round(pts/maxPts*100):0;
-    const rank=i+1,isTop=rank<=3&&pts>0;
-    const medals=['🥇','🥈','🥉'];
-    const rankHtml=isTop?`<span class="lb-rank top">${medals[i]}</span>`:`<span class="lb-rank">${rank}</span>`;
+    const pts=scores[id]||0,pct=pts>0?Math.round(pts/maxPts*100):0,isTop=i<3&&pts>0;
     const row=document.createElement('div');row.className='lb-row';
-    row.innerHTML=`${rankHtml}<span class="lb-name">${esc(p.name)}</span><div class="lb-right"><span class="lb-pts${pts>0?' scored':''}">${pts} pt${pts>1?'s':''}</span>${pts>0?`<div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>`:''}</div>`;
+    row.innerHTML=`<span class="lb-rank">${isTop?medals[i]:(i+1)}</span><span class="lb-name">${esc(p.name)}</span><div class="lb-right"><span class="lb-pts${pts>0?' scored':''}">${pts} pt${pts>1?'s':''}</span>${pts>0?`<div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>`:''}</div>`;
     list.appendChild(row);
   });
 }
 
 function setupDJView(){
-  showView('view-dj');G.roundPaused=false;
+  showView('view-dj');G.roundPaused=false;_lastBuzzedBy=null;
+  acquireWakeLock();
+  // Init audio context on user gesture
+  document.addEventListener('click',()=>{getACtx();},{once:true});
   const shareUrl=`${REDIRECT_URI}?room=${G.room}`;
   $('dj-room-code').textContent=G.room;$('share-link-text').textContent=shareUrl;
   $('copy-btn').onclick=()=>navigator.clipboard?.writeText(shareUrl).then(()=>toast('🔗 Lien copié !')).catch(()=>toast(shareUrl));
@@ -557,6 +528,8 @@ function setupDJView(){
   $('sp-search-btn').onclick=()=>searchSpotify(si.value);
   si.addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify(si.value);});
   $('reset-btn').onclick=resetRound;$('btn-gagner').onclick=awardPoint;$('btn-perdu').onclick=penalizePlayer;
+  // Check notif permission
+  if('Notification' in window&&Notification.permission==='granted'){$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}
   rRef().on('value',snap=>{
     const data=snap.val()||{},players=data.players||{},scores=data.scores||{};
     const buzzedBy=data.buzzedBy??null,penalties=data.penalties||{};
@@ -564,12 +537,22 @@ function setupDJView(){
     const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');
     renderLeaderboard(guessers,scores);
     if(buzzedBy){
-      const w=players[buzzedBy];$('buzz-pname').textContent=w?.name||'Un joueur';
-      $('buzz-block').classList.add('visible');$('reset-btn').style.display='none';
+      const w=players[buzzedBy],name=w?.name||'Un joueur';
+      // Première détection d'un nouveau buzz
+      if(buzzedBy!==_lastBuzzedBy){
+        playBuzz();
+        if(navigator.vibrate)navigator.vibrate([200,80,200,80,200]);
+        showBuzzNotif(name);
+      }
+      $('buzz-pname').textContent=name;$('buzz-ov-name').textContent=name;
+      $('buzz-block').classList.add('visible');$('buzz-overlay').classList.add('active');
+      $('reset-btn').style.display='none';
       if(!G.roundPaused)spotifyPause();
     } else {
-      $('buzz-block').classList.remove('visible');$('reset-btn').style.display='';
+      $('buzz-block').classList.remove('visible');$('buzz-overlay').classList.remove('active');
+      $('reset-btn').style.display='';
     }
+    _lastBuzzedBy=buzzedBy;
   });
 }
 
@@ -577,11 +560,7 @@ function setupBuzzerView(){
   showView('view-buzzer');$('buzzer-name').textContent=G.name;
   const btn=$('buzzer-btn'),st=$('buzzer-status');
   let canBuzz=true,penTimer=null,penStart=null;
-  function startPenalty(ts){
-    if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';
-    penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';
-    if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);
-  }
+  function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);}
   btn.onclick=async()=>{if(!canBuzz)return;if(navigator.vibrate)navigator.vibrate(80);await doBuzz();};
   rRef().on('value',snap=>{
     const data=snap.val()||{},buzzedBy=data.buzzedBy??null,myPen=(data.penalties||{})[G.pid]??null,players=data.players||{};
@@ -603,12 +582,11 @@ $('join-btn').onclick=()=>{
   G.room=room;G.name=name;G.pid=uid();joinRoom();if(G.role==='dj')setupDJView();else setupBuzzerView();
 };
 async function init(){
-  const params=new URLSearchParams(window.location.search);
-  const code=params.get('code'),error=params.get('error');
+  const params=new URLSearchParams(window.location.search);const code=params.get('code'),error=params.get('error');
   function restore(){G.room=localStorage.getItem('sr');G.name=localStorage.getItem('sn');G.role='dj';G.pid=localStorage.getItem('spid')||uid();['sr','sn','spid'].forEach(k=>localStorage.removeItem(k));}
-  if(error){window.history.replaceState({},''  ,window.location.pathname);restore();['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));const desc=params.get('error_description')||error;const msg=error==='access_denied'?'❌ Autorisation refusée.':'❌ Erreur: '+desc;if(G.room&&G.name){joinRoom();setupDJView();setTimeout(()=>toast(msg,8000),500);}else toast(msg,8000);return;}
+  if(error){window.history.replaceState({},'' ,window.location.pathname);restore();['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));const desc=params.get('error_description')||error;const msg=error==='access_denied'?'❌ Autorisation refusée.':'❌ Erreur: '+desc;if(G.room&&G.name){joinRoom();setupDJView();setTimeout(()=>toast(msg,8000),500);}else toast(msg,8000);return;}
   if(!code)return;
-  window.history.replaceState({},''  ,window.location.pathname);restore();
+  window.history.replaceState({},'' ,window.location.pathname);restore();
   if(!G.room||!G.name){['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));toast('❌ Session perdue — recommence');return;}
   toast('🔄 Connexion Spotify…');G.token=await exchangeCode(code);joinRoom();setupDJView();
 }
