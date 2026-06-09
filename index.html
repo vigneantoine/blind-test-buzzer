@@ -15,19 +15,16 @@
     body.dj-mode{padding:0;align-items:stretch;justify-content:stretch;overflow:hidden;}
     .view{display:none;flex-direction:column;align-items:center;gap:0;width:100%;max-width:400px;}
     .view.active{display:flex;}
-
-    /* ── Home page ─────────────────────────────── */
     @keyframes vspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     .home-wrap{display:flex;flex-direction:column;align-items:center;width:100%;gap:24px;}
     .home-hero{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 4px;}
-    /* Plateau tourne-disque */
     .home-vinyl-stage{position:relative;width:124px;height:124px;display:flex;align-items:center;justify-content:center;}
-    .home-platter{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#2e2e2e 0%,#1f1f1f 55%,#161616 100%);border:1px solid #363636;box-shadow:0 6px 28px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03),inset 0 1px 0 rgba(255,255,255,.05);}
+    .home-platter{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#2e2e2e 0%,#1f1f1f 55%,#161616 100%);border:1px solid #363636;box-shadow:0 6px 28px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);}
     .home-vinyl{width:104px;height:104px;animation:vspin 9s linear infinite;position:relative;z-index:1;}
     .home-title{font-size:1.75rem;font-weight:800;color:var(--text);letter-spacing:-.4px;text-align:center;}
     .home-tagline{font-size:.72rem;color:var(--muted);letter-spacing:.3px;text-align:center;}
     .home-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;width:100%;overflow:hidden;}
-    .home-fields{padding:20px 20px 20px;display:flex;flex-direction:column;gap:11px;}
+    .home-fields{padding:20px;display:flex;flex-direction:column;gap:11px;}
     .home-inp{width:100%;background:var(--s2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-size:.95rem;padding:14px 16px;outline:none;transition:border-color .2s,background .15s;-webkit-appearance:none;}
     .home-inp:focus{border-color:var(--gold);background:rgba(200,144,10,.04);}
     .home-inp::placeholder{color:#555;}
@@ -40,11 +37,10 @@
     .home-rc .rc-desc{font-size:.65rem;color:var(--muted);text-align:center;line-height:1.3;}
     .home-rc.active{border-color:var(--gold);background:var(--gold-bg);}
     .home-rc.active .rc-name{color:var(--gold2);}
+    .home-rc.disabled{opacity:.32;cursor:not-allowed;pointer-events:none;}
     .home-cta{border-top:1px solid var(--border);padding:16px 20px 20px;}
     .home-btn{width:100%;padding:15px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:.95rem;font-weight:800;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;-webkit-tap-highlight-color:transparent;}
     .home-btn:active{transform:scale(.98);}
-
-    /* ── Shared buttons ─────────────────────────── */
     .btn{width:100%;padding:14px;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;-webkit-tap-highlight-color:transparent;letter-spacing:.3px;}
     .btn:active:not(:disabled){transform:scale(.98);}
     .btn:disabled{opacity:.35;cursor:not-allowed;}
@@ -54,8 +50,6 @@
     .btn-success{background:var(--green);color:#000;}
     .btn-danger{background:var(--red);color:white;}
     .label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
-
-    /* ── DJ layout ─────────────────────────────── */
     #view-dj{flex-direction:row;max-width:none;width:100%;height:100dvh;gap:0;align-items:stretch;}
     @media(max-width:720px){#view-dj{flex-direction:column;height:auto;overflow-y:auto;}}
     .sp-panel{flex:0 0 50%;background:#080808;display:flex;flex-direction:column;gap:10px;padding:16px;overflow:hidden;position:relative;}
@@ -124,14 +118,14 @@
     .sp-modal-item:hover{background:rgba(255,255,255,.09);color:white;}
     .sp-modal-empty{color:var(--muted);text-align:center;font-size:.8rem;padding:20px 0;}
     .sp-err{text-align:center;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-    .sp-err p{color:#e8870a;font-size:.82rem;line-height:1.5;}
+    .sp-err p{color:#e8870a;font-size:.82rem;}
     .sp-err .err-b{font-family:monospace;font-size:.68rem;color:#ccc;word-break:break-all;text-align:left;background:rgba(255,255,255,.05);border-radius:5px;padding:8px;width:100%;}
-    .sp-err .err-d{font-size:.68rem;color:var(--muted);text-align:left;width:100%;line-height:1.8;background:rgba(255,255,255,.03);border-radius:5px;padding:8px;border:1px solid rgba(255,255,255,.07);}
     .sp-err button{background:var(--spotify);color:white;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;font-size:.82rem;font-weight:600;}
     .game-panel{flex:0 0 50%;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
     @media(max-width:720px){.game-panel{flex:none;border-left:none;border-top:1px solid var(--border);}}
-    .gp-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+    .gp-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
     .room-code{font-size:1.3rem;font-weight:800;letter-spacing:4px;color:var(--gold2);}
+    .share-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
     .share-row{display:flex;gap:6px;align-items:center;}
     .share-url{flex:1;font-size:.68rem;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .share-copy{padding:5px 10px;background:var(--s3);border:1px solid var(--border2);border-radius:6px;color:var(--grey);font-size:.7rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
@@ -168,17 +162,22 @@
     .lb-pts.scored{color:var(--gold2);}
     .lb-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
     .lb-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .5s ease;}
-    .lb-waiting{color:var(--muted);font-size:.82rem;text-align:center;padding:16px 0;}
-    .gp-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;}
-    #view-buzzer{max-width:100%;height:100dvh;justify-content:center;}
-    .buzzer-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:40px 24px;min-height:100dvh;}
-    .buzzer-pname{font-size:.9rem;color:var(--muted);font-weight:500;letter-spacing:.5px;}
-    #buzzer-btn{width:min(72vw,280px);height:min(72vw,280px);border-radius:50%;background:linear-gradient(135deg,#2a1f6e,#4a3aaa);border:none;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:white;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background .3s,box-shadow .3s,transform .1s;box-shadow:0 0 0 12px rgba(124,106,247,.1),0 0 60px rgba(124,106,247,.25);-webkit-tap-highlight-color:transparent;user-select:none;}
-    #buzzer-btn:active:not(.green):not(.red){transform:scale(.92);}
-    #buzzer-btn.green{background:linear-gradient(135deg,#166534,#22c55e);box-shadow:0 0 0 16px rgba(34,197,94,.1),0 0 80px rgba(34,197,94,.35);cursor:default;}
-    #buzzer-btn.red{background:linear-gradient(135deg,#7f1d1d,#ef4444);box-shadow:0 0 0 12px rgba(239,68,68,.08),0 0 50px rgba(239,68,68,.2);cursor:default;}
-    #buzzer-btn.penalty{font-size:2.8rem;letter-spacing:0;}
-    #buzzer-status{font-size:1rem;text-align:center;font-weight:500;color:var(--muted);min-height:1.5em;max-width:260px;line-height:1.5;}
+    .lb-waiting{color:var(--muted);font-size:.82rem;text-align:center;padding:12px 0;}
+    #view-buzzer{max-width:420px;min-height:100dvh;height:auto;justify-content:flex-start;overflow-y:auto;}
+    .buzzer-wrap{display:flex;flex-direction:column;align-items:center;gap:22px;padding:48px 24px 40px;width:100%;}
+    .buzzer-top{display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;}
+    .buzzer-dj-tag{font-size:.75rem;color:var(--muted);letter-spacing:.3px;}
+    .buzzer-pname{font-size:2.2rem;font-weight:900;color:var(--text);letter-spacing:-.5px;text-align:center;}
+    #buzzer-btn{width:min(70vw,250px);height:min(70vw,250px);border-radius:50%;background:linear-gradient(160deg,#3d2fa0,#2a1f6e);border:none;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:900;color:white;letter-spacing:4px;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;transition:transform .1s,box-shadow .1s;box-shadow:0 10px 0 #1a1048,0 16px 32px rgba(124,106,247,.35);}
+    #buzzer-btn:active:not(.green):not(.red){transform:translateY(8px);box-shadow:0 2px 0 #1a1048,0 6px 14px rgba(124,106,247,.2);}
+    #buzzer-btn.green{background:linear-gradient(160deg,#16a34a,#166534);box-shadow:0 10px 0 #0d5c2c,0 16px 32px rgba(34,197,94,.3);font-size:4rem;letter-spacing:0;cursor:default;}
+    #buzzer-btn.green:active{transform:none;box-shadow:0 10px 0 #0d5c2c,0 16px 32px rgba(34,197,94,.3);}
+    #buzzer-btn.red{background:linear-gradient(160deg,#b91c1c,#7f1d1d);box-shadow:0 10px 0 #5c0f0f,0 14px 26px rgba(239,68,68,.25);cursor:default;}
+    #buzzer-btn.red:active{transform:none;}
+    #buzzer-btn.penalty{font-size:2.6rem;letter-spacing:0;}
+    #buzzer-status{font-size:1rem;text-align:center;font-weight:500;color:var(--muted);min-height:1.5em;max-width:280px;line-height:1.5;}
+    .buzzer-lb{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+    .buzzer-lb-title{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:10px 20px;border-radius:100px;font-size:.84rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;max-width:90vw;text-align:center;}
     #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
@@ -194,25 +193,17 @@
     <button class="btn btn-danger" onclick="penalizePlayer()">❌ Perdu</button>
   </div>
 </div>
-
 <!-- ACCUEIL -->
 <div id="view-home" class="view active">
   <div class="home-wrap">
     <div class="home-hero">
-      <!-- Plateau tourne-disque + vinyle qui tourne -->
       <div class="home-vinyl-stage">
         <div class="home-platter"></div>
         <div class="home-vinyl">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="104" height="104">
             <defs>
-              <radialGradient id="vlbl" cx="38%" cy="35%">
-                <stop offset="0%" stop-color="#e8a80c"/>
-                <stop offset="100%" stop-color="#9a6508"/>
-              </radialGradient>
-              <radialGradient id="vshine" cx="32%" cy="28%">
-                <stop offset="0%" stop-color="rgba(255,255,255,.07)"/>
-                <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
-              </radialGradient>
+              <radialGradient id="vlbl" cx="38%" cy="35%"><stop offset="0%" stop-color="#e8a80c"/><stop offset="100%" stop-color="#9a6508"/></radialGradient>
+              <radialGradient id="vshine" cx="32%" cy="28%"><stop offset="0%" stop-color="rgba(255,255,255,.07)"/><stop offset="60%" stop-color="rgba(255,255,255,0)"/></radialGradient>
             </defs>
             <circle cx="50" cy="50" r="49" fill="#111"/>
             <circle cx="50" cy="50" r="46" fill="none" stroke="#1e1e1e" stroke-width="0.8"/>
@@ -242,25 +233,14 @@
       <div class="home-role-section">
         <div class="home-role-lbl">Je suis</div>
         <div class="home-role-row">
-          <div class="home-rc active" data-role="guesser">
-            <span class="rc-icon">🎧</span>
-            <span class="rc-name">Joueur</span>
-            <span class="rc-desc">J'écoute et je wizze</span>
-          </div>
-          <div class="home-rc" data-role="dj">
-            <span class="rc-icon">🎵</span>
-            <span class="rc-name">DJ</span>
-            <span class="rc-desc">Je gère la musique</span>
-          </div>
+          <div class="home-rc active" data-role="guesser"><span class="rc-icon">🎧</span><span class="rc-name">Joueur</span><span class="rc-desc">J'écoute et je wizze</span></div>
+          <div class="home-rc" id="dj-role-card" data-role="dj"><span class="rc-icon">🎵</span><span class="rc-name">DJ</span><span class="rc-desc">Je gère la musique</span></div>
         </div>
       </div>
-      <div class="home-cta">
-        <button id="join-btn" class="home-btn">Rejoindre la salle →</button>
-      </div>
+      <div class="home-cta"><button id="join-btn" class="home-btn">Rejoindre la salle →</button></div>
     </div>
   </div>
 </div>
-
 <!-- VUE DJ -->
 <div id="view-dj" class="view">
   <div class="sp-panel">
@@ -282,20 +262,12 @@
         <div class="sp-now-info">
           <div class="sp-track" id="sp-track-name">Rien en lecture</div>
           <div class="sp-artist" id="sp-artist-name">—</div>
-          <div class="sp-prog-row">
-            <div class="sp-prog-bar"><div class="sp-prog-fill" id="sp-prog-fill"></div></div>
-            <div class="sp-times"><span id="sp-t-curr">0:00</span><span id="sp-t-tot">0:00</span></div>
-          </div>
+          <div class="sp-prog-row"><div class="sp-prog-bar"><div class="sp-prog-fill" id="sp-prog-fill"></div></div><div class="sp-times"><span id="sp-t-curr">0:00</span><span id="sp-t-tot">0:00</span></div></div>
         </div>
-        <div class="sp-ctrl">
-          <button class="sp-c" id="sp-prev">⏮</button>
-          <button class="sp-c main" id="sp-pp">▶</button>
-          <button class="sp-c" id="sp-next">⏭</button>
-        </div>
+        <div class="sp-ctrl"><button class="sp-c" id="sp-prev">⏮</button><button class="sp-c main" id="sp-pp">▶</button><button class="sp-c" id="sp-next">⏭</button></div>
       </div>
       <div class="sp-next sp-z" id="sp-next-track">
-        <span class="sp-next-lbl">Suivant</span>
-        <img id="sp-next-art" class="sp-next-art" src="" alt="">
+        <span class="sp-next-lbl">Suivant</span><img id="sp-next-art" class="sp-next-art" src="" alt="">
         <div style="min-width:0;flex:1;"><div class="sp-next-name" id="sp-next-name"></div><div class="sp-next-art2" id="sp-next-artist"></div></div>
       </div>
       <div class="sp-search-section sp-z">
@@ -304,10 +276,7 @@
           <button class="sp-tab" id="tab-pl-btn" onclick="switchTab('playlists')">🎵 Mes playlists</button>
         </div>
         <div class="sp-tab-panel" id="sp-tab-search">
-          <div class="sp-search-bar">
-            <input class="sp-search-inp" id="sp-search-inp" type="text" placeholder="Chanson, artiste…">
-            <button class="sp-search-go" id="sp-search-btn">OK</button>
-          </div>
+          <div class="sp-search-bar"><input class="sp-search-inp" id="sp-search-inp" type="text" placeholder="Chanson, artiste…"><button class="sp-search-go" id="sp-search-btn">OK</button></div>
           <div class="sp-results" id="sp-results"><p class="sp-empty">Tape un titre pour commencer</p></div>
         </div>
         <div class="sp-tab-panel" id="sp-tab-playlists" style="display:none;">
@@ -323,10 +292,8 @@
   <div class="game-panel">
     <div class="gp-header">
       <div class="room-code" id="dj-room-code">—</div>
-      <div class="share-row">
-        <div class="share-url" id="share-link-text">—</div>
-        <button class="share-copy" id="copy-btn">Copier</button>
-      </div>
+      <div class="share-label">Invitez de nouveaux participants</div>
+      <div class="share-row"><div class="share-url" id="share-link-text">—</div><button class="share-copy" id="copy-btn">Copier</button></div>
     </div>
     <div class="gp-body">
       <div class="buzz-block" id="buzz-block">
@@ -338,19 +305,23 @@
         <div class="lb-list" id="players-list"><p class="lb-waiting">En attente des joueurs…</p></div>
       </div>
     </div>
-    <div class="gp-footer"><button id="reset-btn" class="btn btn-ghost btn-sm">🔄 Nouvelle manche</button></div>
   </div>
 </div>
-
 <!-- BUZZER -->
 <div id="view-buzzer" class="view">
   <div class="buzzer-wrap">
-    <div class="buzzer-pname" id="buzzer-name"></div>
+    <div class="buzzer-top">
+      <div class="buzzer-dj-tag" id="buzzer-dj-tag"></div>
+      <div class="buzzer-pname" id="buzzer-name"></div>
+    </div>
     <button id="buzzer-btn">WIZZ!</button>
     <div id="buzzer-status">Écoute et wizze quand tu reconnais !</div>
+    <div class="buzzer-lb">
+      <div class="buzzer-lb-title">Classement</div>
+      <div class="lb-list" id="buzzer-lb-list"><p class="lb-waiting">En attente…</p></div>
+    </div>
   </div>
 </div>
-
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
@@ -400,8 +371,7 @@ function switchTab(tab){const s=tab==='search';$('tab-search-btn').classList.tog
 async function loadPlTab(){const c=$('sp-pl-inline');c.innerHTML='<p class="sp-empty">Chargement…</p>';await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');if(!r||r.status!==200){c.innerHTML='<p class="sp-empty">⚠️ Erreur ('+r?.status+')</p>';return;}let json;try{json=await r.json();}catch(e){c.innerHTML='<p class="sp-empty">⚠️ Illisible</p>';return;}const pls=json.items||[];c.innerHTML='';if(!pls.length){c.innerHTML='<p class="sp-empty">Aucune playlist</p>';return;}pls.forEach(pl=>{if(!pl||!pl.id)return;const row=document.createElement('div');row.className='sp-row';const art=pl.images?.[0]?.url||'';row.innerHTML=`<img class="sp-row-art" src="${art}" alt="" onerror="this.style.display='none'"><div class="sp-row-info"><div class="sp-row-name">${esc(pl.name)}</div><div class="sp-row-sub">${pl.tracks?.total??'?'} titres</div></div><button class="sp-act play">▶</button>`;row.querySelector('.play').onclick=()=>playPlaylist(pl.id,pl.name);c.appendChild(row);});}
 let _sd=null;
 async function searchSpotify(q){if(!q.trim()){$('sp-results').innerHTML='<p class="sp-empty">Tape un titre pour commencer</p>';return;}$('sp-results').innerHTML='<p class="sp-empty">Recherche…</p>';const r=await spFetch('GET',`/search?q=${encodeURIComponent(q)}&type=track&limit=10`);if(!r||r.status!==200){$('sp-results').innerHTML='<p class="sp-empty">Erreur ('+r?.status+')</p>';return;}const tracks=(await r.json()).tracks?.items||[];const c=$('sp-results');if(!tracks.length){c.innerHTML='<p class="sp-empty">Aucun résultat</p>';return;}c.innerHTML='';tracks.forEach(t=>{const art=t.album?.images?.[2]?.url||t.album?.images?.[0]?.url||'';const row=document.createElement('div');row.className='sp-row';row.innerHTML=`<img class="sp-row-art" src="${art}" alt=""><div class="sp-row-info"><div class="sp-row-name">${esc(t.name)}</div><div class="sp-row-sub">${esc(t.artists?.map(a=>a.name).join(', ')||'')}</div></div><div class="sp-row-acts"><button class="sp-act play">▶</button><button class="sp-act add">+</button></div>`;row.querySelector('.play').onclick=()=>spotifyPlay(t.uri);row.querySelector('.add').onclick=()=>openPlModal(t.uri);c.appendChild(row);});}
-async function showPlError(status,raw,trackUri,plId){const disp=raw||'(vide)';let diag='';if(status===403){$('sp-pl-list').innerHTML='<div class="sp-err"><p>⏳ Diagnostic…</p></div>';try{const[pr,mr]=await Promise.all([spFetch('GET',`/playlists/${plId}?fields=public,collaborative,owner`),spFetch('GET','/me')]);const pd=pr?.status===200?await pr.json():null,md=mr?.status===200?await mr.json():null;const pub=pd?.public,own=pd?.owner?.id||'?',me=md?.id||G.userId||'?';const ns=pub?'playlist-modify-public':'playlist-modify-private',sc=G.grantedScopes||'';const ok=sc.includes('playlist-modify-public')&&sc.includes('playlist-modify-private');diag=`<div class="err-d">📋 ${pub?'publique':pub===false?'privée':'?'} · ${own===me?'✅ tu es proprio':'❌ pas toi'}<br>${ok?'✅ Scopes OK':'❌ Scope manquant: '+esc(ns)}</div>`;}catch(e){diag='<div class="err-d">⚠️ Diagnostic échoué</div>';}}$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur ${status}</p><div class="err-b">${esc(disp)}</div>${diag}<button onclick="reauthorizeSpotify()">🔗 Re-autoriser</button></div>`;}
-async function openPlModal(trackUri){if(!trackUri||!trackUri.startsWith('spotify:')){toast('⚠️ URI invalide');return;}pendingAddTrackUri=trackUri;$('sp-pl-modal').classList.add('open');$('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';const userId=await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');if(!r||r.status!==200){$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur (${r?.status})</p><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;return;}let json;try{json=await r.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Illisible</p>';return;}const owned=(json.items||[]).filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));const list=$('sp-pl-list');list.innerHTML='';if(!owned.length){list.innerHTML='<p class="sp-modal-empty">Aucune playlist modifiable</p>';return;}owned.forEach(pl=>{try{const item=document.createElement('div');item.className='sp-modal-item';item.textContent='💿 '+pl.name+' ('+(pl.tracks?.total??'?')+' titres)';item.onclick=async()=>{const orig=item.textContent;item.textContent='⏳…';item.style.opacity='.6';const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});let raw1='';if(r1)try{raw1=await r1.text();}catch(e){}if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);let raw2='';if(r2)try{raw2=await r2.text();}catch(e){}if(r2?.status===201||r2?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}item.textContent=orig;item.style.opacity='1';await showPlError(r1?.status||r2?.status||'?',raw1||raw2,pendingAddTrackUri,pl.id);};list.appendChild(item);}catch(e){}});}
+async function openPlModal(trackUri){if(!trackUri||!trackUri.startsWith('spotify:')){toast('⚠️ URI invalide');return;}pendingAddTrackUri=trackUri;$('sp-pl-modal').classList.add('open');$('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';const userId=await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');if(!r||r.status!==200){$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur (${r?.status})</p><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;return;}let json;try{json=await r.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Illisible</p>';return;}const owned=(json.items||[]).filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));const list=$('sp-pl-list');list.innerHTML='';if(!owned.length){list.innerHTML='<p class="sp-modal-empty">Aucune playlist modifiable</p>';return;}owned.forEach(pl=>{try{const item=document.createElement('div');item.className='sp-modal-item';item.textContent='💿 '+pl.name+' ('+(pl.tracks?.total??'?')+' titres)';item.onclick=async()=>{const orig=item.textContent;item.textContent='⏳…';item.style.opacity='.6';const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});let raw='';if(r1)try{raw=await r1.text();}catch(e){}if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}item.textContent=orig;item.style.opacity='1';$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur ${r1?.status||'?'}</p><div class="err-b">${esc(raw||'vide')}</div><button onclick="reauthorizeSpotify()">🔗 Re-autoriser</button></div>`;};list.appendChild(item);}catch(e){}});}
 function reauthorizeSpotify(){$('sp-pl-modal').classList.remove('open');G.token=null;G.userId=null;G.grantedScopes='';if(_poller){clearInterval(_poller);_poller=null;}if(_progTimer){clearInterval(_progTimer);_progTimer=null;}toast('🔄 Redirection…',3000);setTimeout(()=>startSpotifyAuth(true),800);}
 function rRef(path){return db.ref(`rooms/${G.room}${path?'/'+path:''}`);}
 function joinRoom(){const ref=rRef(`players/${G.pid}`);ref.set({name:G.name,role:G.role,at:Date.now()});ref.onDisconnect().remove();}
@@ -409,16 +379,100 @@ async function doBuzz(){const r=await rRef('buzzedBy').transaction(cur=>{if(cur!
 let lastPlayers={};
 async function awardPoint(){const w=G.currentBuzzedBy;if(!w)return;await rRef(`scores/${w}`).transaction(cur=>(cur||0)+1);await rRef().update({buzzedBy:null,status:'waiting',penalties:null});G.roundPaused=false;toast('🏆 Point accordé à '+(lastPlayers[w]?.name||'?')+' !');}
 async function penalizePlayer(){const l=G.currentBuzzedBy;if(!l)return;await rRef().update({buzzedBy:null,status:'waiting',[`penalties/${l}`]:Date.now()});G.roundPaused=false;await spotifyPlay();toast('❌ Pénalité pour '+(lastPlayers[l]?.name||'?')+' !');}
-async function resetRound(){G.roundPaused=false;await rRef().update({buzzedBy:null,status:'waiting',penalties:null});toast('🔄 Nouvelle manche !');}
-function renderLeaderboard(guessers,scores){const list=$('players-list');list.innerHTML='';if(!guessers.length){list.innerHTML='<p class="lb-waiting">En attente des joueurs…</p>';$('lb-count').textContent='';return;}$('lb-count').textContent=guessers.length+' joueur'+(guessers.length>1?'s':'');const sorted=[...guessers].sort(([a],[b])=>(scores[b]||0)-(scores[a]||0));const maxPts=Math.max(1,...sorted.map(([id])=>scores[id]||0));const medals=['🥇','🥈','🥉'];sorted.forEach(([id,p],i)=>{const pts=scores[id]||0,pct=pts>0?Math.round(pts/maxPts*100):0,isTop=i<3&&pts>0;const row=document.createElement('div');row.className='lb-row';row.innerHTML=`<span class="lb-rank">${isTop?medals[i]:(i+1)}</span><span class="lb-name">${esc(p.name)}</span><div class="lb-right"><span class="lb-pts${pts>0?' scored':''}">${pts} pt${pts>1?'s':''}</span>${pts>0?`<div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>`:''}</div>`;list.appendChild(row);});}
-function setupDJView(){showView('view-dj');G.roundPaused=false;_lastBuzzedBy=null;acquireWakeLock();document.addEventListener('click',()=>{getACtx();},{once:true});const shareUrl=`${REDIRECT_URI}?room=${G.room}`;$('dj-room-code').textContent=G.room;$('share-link-text').textContent=shareUrl;$('copy-btn').onclick=()=>navigator.clipboard?.writeText(shareUrl).then(()=>toast('🔗 Lien copié !')).catch(()=>toast(shareUrl));if(G.token){$('sp-disconnected').style.display='none';$('sp-connected').style.display='flex';startPoller();}else{$('btn-spotify').onclick=startSpotifyAuth;}$('sp-pp').onclick=()=>{if(G.isPlaying)spotifyPause(true);else spotifyPlay();};$('sp-prev').onclick=spotifyPrev;$('sp-next').onclick=spotifyNext;$('sp-pl-close').onclick=()=>$('sp-pl-modal').classList.remove('open');const si=$('sp-search-inp');si.addEventListener('input',()=>{clearTimeout(_sd);_sd=setTimeout(()=>searchSpotify(si.value),500);});$('sp-search-btn').onclick=()=>searchSpotify(si.value);si.addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify(si.value);});$('reset-btn').onclick=resetRound;$('btn-gagner').onclick=awardPoint;$('btn-perdu').onclick=penalizePlayer;if('Notification' in window&&Notification.permission==='granted'){$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}rRef().on('value',snap=>{const data=snap.val()||{},players=data.players||{},scores=data.scores||{};const buzzedBy=data.buzzedBy??null,penalties=data.penalties||{};lastPlayers=players;G.currentBuzzedBy=buzzedBy;const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');renderLeaderboard(guessers,scores);if(buzzedBy){const w=players[buzzedBy],name=w?.name||'Un joueur';if(buzzedBy!==_lastBuzzedBy){playBuzz();if(navigator.vibrate)navigator.vibrate([200,80,200,80,200]);showBuzzNotif(name);}$('buzz-pname').textContent=name;$('buzz-ov-name').textContent=name;$('buzz-block').classList.add('visible');$('buzz-overlay').classList.add('active');$('reset-btn').style.display='none';if(!G.roundPaused)spotifyPause();}else{$('buzz-block').classList.remove('visible');$('buzz-overlay').classList.remove('active');$('reset-btn').style.display='';}_lastBuzzedBy=buzzedBy;});}
-function setupBuzzerView(){showView('view-buzzer');$('buzzer-name').textContent=G.name;const btn=$('buzzer-btn'),st=$('buzzer-status');let canBuzz=true,penTimer=null,penStart=null;function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);}btn.onclick=async()=>{if(!canBuzz)return;if(navigator.vibrate)navigator.vibrate(80);await doBuzz();};rRef().on('value',snap=>{const data=snap.val()||{},buzzedBy=data.buzzedBy??null,myPen=(data.penalties||{})[G.pid]??null,players=data.players||{};if(myPen&&myPen!==penStart){startPenalty(myPen);return;}if(penStart)return;if(!buzzedBy){btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}else if(buzzedBy===G.pid){btn.className='green';btn.textContent='🏆';st.textContent='Tu as wizzé en premier !';canBuzz=false;if(navigator.vibrate)navigator.vibrate([100,50,150]);}else{const winner=players[buzzedBy];btn.className='red';btn.textContent='✗';st.textContent=(winner?.name||'Quelqu\'un')+' a été plus rapide que toi !';canBuzz=false;}});}
+function renderLeaderboard(guessers,scores,listId){
+  const list=$(listId);list.innerHTML='';
+  if(!guessers.length){list.innerHTML='<p class="lb-waiting">Aucun joueur pour l\'instant</p>';return;}
+  if(listId==='players-list')$('lb-count').textContent=guessers.length+' joueur'+(guessers.length>1?'s':'');
+  const sorted=[...guessers].sort(([a],[b])=>(scores[b]||0)-(scores[a]||0));
+  const maxPts=Math.max(1,...sorted.map(([id])=>scores[id]||0));
+  const medals=['🥇','🥈','🥉'];
+  sorted.forEach(([id,p],i)=>{
+    const pts=scores[id]||0,pct=pts>0?Math.round(pts/maxPts*100):0,isTop=i<3&&pts>0;
+    const row=document.createElement('div');row.className='lb-row';
+    const bar=pts>0&&listId==='players-list'?`<div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>`:'';
+    row.innerHTML=`<span class="lb-rank">${isTop?medals[i]:(i+1)}</span><span class="lb-name">${esc(p.name)}</span><div class="lb-right"><span class="lb-pts${pts>0?' scored':''}">${pts} pt${pts>1?'s':''}</span>${bar}</div>`;
+    list.appendChild(row);
+  });
+}
+function setupDJView(){
+  showView('view-dj');G.roundPaused=false;_lastBuzzedBy=null;acquireWakeLock();
+  document.addEventListener('click',()=>{getACtx();},{once:true});
+  const shareUrl=`${REDIRECT_URI}?room=${G.room}`;
+  $('dj-room-code').textContent=G.room;$('share-link-text').textContent=shareUrl;
+  $('copy-btn').onclick=()=>navigator.clipboard?.writeText(shareUrl).then(()=>toast('🔗 Lien copié !')).catch(()=>toast(shareUrl));
+  if(G.token){$('sp-disconnected').style.display='none';$('sp-connected').style.display='flex';startPoller();}
+  else{$('btn-spotify').onclick=startSpotifyAuth;}
+  $('sp-pp').onclick=()=>{if(G.isPlaying)spotifyPause(true);else spotifyPlay();};
+  $('sp-prev').onclick=spotifyPrev;$('sp-next').onclick=spotifyNext;
+  $('sp-pl-close').onclick=()=>$('sp-pl-modal').classList.remove('open');
+  const si=$('sp-search-inp');
+  si.addEventListener('input',()=>{clearTimeout(_sd);_sd=setTimeout(()=>searchSpotify(si.value),500);});
+  $('sp-search-btn').onclick=()=>searchSpotify(si.value);
+  si.addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify(si.value);});
+  $('btn-gagner').onclick=awardPoint;$('btn-perdu').onclick=penalizePlayer;
+  if('Notification' in window&&Notification.permission==='granted'){$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}
+  rRef().on('value',snap=>{
+    const data=snap.val()||{},players=data.players||{},scores=data.scores||{};
+    const buzzedBy=data.buzzedBy??null;
+    lastPlayers=players;G.currentBuzzedBy=buzzedBy;
+    const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');
+    renderLeaderboard(guessers,scores,'players-list');
+    if(buzzedBy){
+      const w=players[buzzedBy],name=w?.name||'Un joueur';
+      if(buzzedBy!==_lastBuzzedBy){playBuzz();if(navigator.vibrate)navigator.vibrate([200,80,200,80,200]);showBuzzNotif(name);}
+      $('buzz-pname').textContent=name;$('buzz-ov-name').textContent=name;
+      $('buzz-block').classList.add('visible');$('buzz-overlay').classList.add('active');
+      if(!G.roundPaused)spotifyPause();
+    } else {
+      $('buzz-block').classList.remove('visible');$('buzz-overlay').classList.remove('active');
+    }
+    _lastBuzzedBy=buzzedBy;
+  });
+}
+function setupBuzzerView(){
+  showView('view-buzzer');$('buzzer-name').textContent=G.name;
+  const btn=$('buzzer-btn'),st=$('buzzer-status');
+  let canBuzz=true,penTimer=null,penStart=null;
+  function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);}
+  btn.onclick=async()=>{if(!canBuzz)return;if(navigator.vibrate)navigator.vibrate(80);await doBuzz();};
+  rRef().on('value',snap=>{
+    const data=snap.val()||{},buzzedBy=data.buzzedBy??null,myPen=(data.penalties||{})[G.pid]??null,players=data.players||{},scores=data.scores||{};
+    const djPlayer=Object.values(players).find(p=>p.role==='dj');
+    $('buzzer-dj-tag').textContent=djPlayer?`🎵 DJ : ${djPlayer.name}`:'';
+    const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');
+    renderLeaderboard(guessers,scores,'buzzer-lb-list');
+    if(myPen&&myPen!==penStart){startPenalty(myPen);return;}
+    if(penStart)return;
+    if(!buzzedBy){btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}
+    else if(buzzedBy===G.pid){btn.className='green';btn.textContent='🏆';st.textContent='Tu as wizzé en premier !';canBuzz=false;if(navigator.vibrate)navigator.vibrate([100,50,150]);}
+    else{const winner=players[buzzedBy];btn.className='red';btn.textContent='✗';st.textContent=(winner?.name||'Quelqu\'un')+' a été plus rapide que toi !';canBuzz=false;}
+  });
+}
 const urlP=new URLSearchParams(window.location.search);
-if(urlP.get('room'))$('inp-room').value=urlP.get('room').toUpperCase();
+const viaLink=!!urlP.get('room');
+if(viaLink){const djCard=$('dj-role-card');djCard.classList.add('disabled');djCard.title='Un DJ est déjà en place';$('inp-room').value=urlP.get('room').toUpperCase();}
 $('inp-room').addEventListener('input',function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');});
-document.querySelectorAll('.home-rc').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.home-rc').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.role=b.dataset.role;};});
-$('join-btn').onclick=()=>{const room=$('inp-room').value.trim(),name=$('inp-name').value.trim();if(!room)return toast('⚠️ Entre un code de salle');if(!name)return toast('⚠️ Entre ton prénom');G.room=room;G.name=name;G.pid=uid();joinRoom();if(G.role==='dj')setupDJView();else setupBuzzerView();};
-async function init(){const params=new URLSearchParams(window.location.search);const code=params.get('code'),error=params.get('error');function restore(){G.room=localStorage.getItem('sr');G.name=localStorage.getItem('sn');G.role='dj';G.pid=localStorage.getItem('spid')||uid();['sr','sn','spid'].forEach(k=>localStorage.removeItem(k));}if(error){window.history.replaceState({},'' ,window.location.pathname);restore();['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));const desc=params.get('error_description')||error;const msg=error==='access_denied'?'❌ Autorisation refusée.':'❌ Erreur: '+desc;if(G.room&&G.name){joinRoom();setupDJView();setTimeout(()=>toast(msg,8000),500);}else toast(msg,8000);return;}if(!code)return;window.history.replaceState({},'' ,window.location.pathname);restore();if(!G.room||!G.name){['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));toast('❌ Session perdue — recommence');return;}toast('🔄 Connexion Spotify…');G.token=await exchangeCode(code);joinRoom();setupDJView();}
+document.querySelectorAll('.home-rc').forEach(b=>{b.onclick=()=>{if(b.classList.contains('disabled'))return;document.querySelectorAll('.home-rc').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.role=b.dataset.role;};});
+$('join-btn').onclick=async()=>{
+  const room=$('inp-room').value.trim(),name=$('inp-name').value.trim();
+  if(!room)return toast('⚠️ Entre un code de salle');if(!name)return toast('⚠️ Entre ton prénom');
+  G.room=room;G.name=name;G.pid=uid();
+  if(G.role==='dj'){
+    const snap=await db.ref(`rooms/${room}/players`).once('value');
+    const existingDj=Object.values(snap.val()||{}).find(p=>p.role==='dj');
+    if(existingDj){toast(`⚠️ "${existingDj.name}" est déjà DJ dans cette salle`);return;}
+  }
+  joinRoom();if(G.role==='dj')setupDJView();else setupBuzzerView();
+};
+async function init(){
+  const params=new URLSearchParams(window.location.search);const code=params.get('code'),error=params.get('error');
+  function restore(){G.room=localStorage.getItem('sr');G.name=localStorage.getItem('sn');G.role='dj';G.pid=localStorage.getItem('spid')||uid();['sr','sn','spid'].forEach(k=>localStorage.removeItem(k));}
+  if(error){window.history.replaceState({},'' ,window.location.pathname);restore();['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));const desc=params.get('error_description')||error;const msg=error==='access_denied'?'❌ Autorisation refusée.':'❌ Erreur: '+desc;if(G.room&&G.name){joinRoom();setupDJView();setTimeout(()=>toast(msg,8000),500);}else toast(msg,8000);return;}
+  if(!code)return;
+  window.history.replaceState({},'' ,window.location.pathname);restore();
+  if(!G.room||!G.name){['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));toast('❌ Session perdue — recommence');return;}
+  toast('🔄 Connexion Spotify…');G.token=await exchangeCode(code);joinRoom();setupDJView();
+}
 init();
 </script>
 </body>
