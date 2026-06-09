@@ -1,1 +1,426 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0c0c0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Le Jeu des Disques</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--bg:#0c0c0c;--s1:#161616;--s2:#1e1e1e;--s3:#262626;--border:#2e2e2e;--border2:#3a3a3a;--text:#ffffff;--muted:#999;--grey:#c0c0c0;--gold:#c8900a;--gold2:#e8a80c;--gold-bg:rgba(200,144,10,.1);--gold-border:rgba(200,144,10,.3);--green:#22c55e;--red:#e03535;--spotify:#1DB954;}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;}
+    body{display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:24px;}
+    body.dj-mode{padding:0;align-items:stretch;justify-content:stretch;overflow:hidden;}
+    .view{display:none;flex-direction:column;align-items:center;gap:0;width:100%;max-width:400px;}
+    .view.active{display:flex;}
+
+    /* ── Home page ─────────────────────────────── */
+    @keyframes vspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .home-wrap{display:flex;flex-direction:column;align-items:center;width:100%;gap:24px;}
+    .home-hero{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 4px;}
+    /* Plateau tourne-disque */
+    .home-vinyl-stage{position:relative;width:124px;height:124px;display:flex;align-items:center;justify-content:center;}
+    .home-platter{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#2e2e2e 0%,#1f1f1f 55%,#161616 100%);border:1px solid #363636;box-shadow:0 6px 28px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03),inset 0 1px 0 rgba(255,255,255,.05);}
+    .home-vinyl{width:104px;height:104px;animation:vspin 9s linear infinite;position:relative;z-index:1;}
+    .home-title{font-size:1.75rem;font-weight:800;color:var(--text);letter-spacing:-.4px;text-align:center;}
+    .home-tagline{font-size:.72rem;color:var(--muted);letter-spacing:.3px;text-align:center;}
+    .home-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;width:100%;overflow:hidden;}
+    .home-fields{padding:20px 20px 20px;display:flex;flex-direction:column;gap:11px;}
+    .home-inp{width:100%;background:var(--s2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-size:.95rem;padding:14px 16px;outline:none;transition:border-color .2s,background .15s;-webkit-appearance:none;}
+    .home-inp:focus{border-color:var(--gold);background:rgba(200,144,10,.04);}
+    .home-inp::placeholder{color:#555;}
+    .home-role-section{border-top:1px solid var(--border);padding:16px 20px;}
+    .home-role-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;}
+    .home-role-row{display:flex;gap:8px;}
+    .home-rc{flex:1;padding:14px 12px;background:var(--s2);border:1.5px solid var(--border2);border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:border-color .2s,background .2s;-webkit-tap-highlight-color:transparent;}
+    .home-rc .rc-icon{font-size:1.6rem;line-height:1;}
+    .home-rc .rc-name{font-size:.82rem;font-weight:700;color:var(--grey);}
+    .home-rc .rc-desc{font-size:.65rem;color:var(--muted);text-align:center;line-height:1.3;}
+    .home-rc.active{border-color:var(--gold);background:var(--gold-bg);}
+    .home-rc.active .rc-name{color:var(--gold2);}
+    .home-cta{border-top:1px solid var(--border);padding:16px 20px 20px;}
+    .home-btn{width:100%;padding:15px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:.95rem;font-weight:800;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;-webkit-tap-highlight-color:transparent;}
+    .home-btn:active{transform:scale(.98);}
+
+    /* ── Shared buttons ─────────────────────────── */
+    .btn{width:100%;padding:14px;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;-webkit-tap-highlight-color:transparent;letter-spacing:.3px;}
+    .btn:active:not(:disabled){transform:scale(.98);}
+    .btn:disabled{opacity:.35;cursor:not-allowed;}
+    .btn-spotify{background:var(--spotify);color:white;}
+    .btn-ghost{background:var(--s2);color:var(--grey);border:1px solid var(--border2);}
+    .btn-sm{padding:11px;font-size:.85rem;}
+    .btn-success{background:var(--green);color:#000;}
+    .btn-danger{background:var(--red);color:white;}
+    .label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
+
+    /* ── DJ layout ─────────────────────────────── */
+    #view-dj{flex-direction:row;max-width:none;width:100%;height:100dvh;gap:0;align-items:stretch;}
+    @media(max-width:720px){#view-dj{flex-direction:column;height:auto;overflow-y:auto;}}
+    .sp-panel{flex:0 0 50%;background:#080808;display:flex;flex-direction:column;gap:10px;padding:16px;overflow:hidden;position:relative;}
+    @media(max-width:720px){.sp-panel{flex:none;min-height:50vh;}}
+    .sp-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(90px) brightness(.15) saturate(2);transform:scale(1.1);transition:background-image 1s;pointer-events:none;z-index:0;}
+    .sp-z{position:relative;z-index:1;}
+    .sp-disconnected{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1;justify-content:center;text-align:center;}
+    .sp-disco-icon{font-size:3.5rem;opacity:.2;}
+    .sp-disco-text{color:var(--muted);font-size:.85rem;max-width:220px;line-height:1.5;}
+    .sp-now-playing{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;flex-shrink:0;}
+    .sp-art-sm{width:58px;height:58px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--s2);display:block;}
+    .sp-art-ph{width:58px;height:58px;border-radius:6px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:#444;}
+    .sp-now-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+    .sp-track{font-size:.85rem;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-artist{font-size:.7rem;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-prog-row{display:flex;flex-direction:column;gap:3px;margin-top:5px;}
+    .sp-prog-bar{height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+    .sp-prog-fill{height:100%;width:0%;background:var(--gold2);border-radius:2px;transition:width 1s linear;}
+    .sp-times{display:flex;justify-content:space-between;font-size:.6rem;color:rgba(255,255,255,.35);}
+    .sp-ctrl{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+    .sp-c{background:none;border:none;color:rgba(255,255,255,.6);font-size:1rem;cursor:pointer;padding:5px;border-radius:50%;transition:color .2s;-webkit-tap-highlight-color:transparent;}
+    .sp-c:hover{color:white;}
+    .sp-c.main{font-size:1.5rem;color:white;}
+    .sp-next{display:none;flex-direction:row;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;flex-shrink:0;}
+    .sp-next-lbl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.3);white-space:nowrap;}
+    .sp-next-art{width:28px;height:28px;border-radius:3px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.08);}
+    .sp-next-name{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-next-art2{font-size:.65rem;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-badge{display:none;align-items:center;gap:6px;padding:5px 10px;background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.2);border-radius:6px;color:var(--spotify);font-size:.72rem;font-weight:600;}
+    .sp-reauth{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.5);font-size:.7rem;padding:5px 9px;cursor:pointer;transition:all .2s;}
+    .sp-reauth:hover{color:white;background:rgba(255,255,255,.1);}
+    .sp-notif{background:rgba(200,144,10,.08);border:1px solid rgba(200,144,10,.2);border-radius:6px;color:rgba(200,144,10,.75);font-size:.7rem;padding:5px 9px;cursor:pointer;transition:all .2s;}
+    .sp-notif:hover{color:var(--gold2);}
+    .sp-notif.ok{color:var(--gold2);opacity:.5;pointer-events:none;}
+    .sp-tabs{display:flex;gap:5px;flex-shrink:0;}
+    .sp-tab{flex:1;padding:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;color:rgba(255,255,255,.45);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500;}
+    .sp-tab.active{background:var(--gold-bg);border-color:var(--gold-border);color:var(--gold2);font-weight:700;}
+    .sp-search-section{flex:1;display:flex;flex-direction:column;gap:8px;overflow:hidden;min-height:0;}
+    .sp-tab-panel{flex:1;display:flex;flex-direction:column;gap:8px;overflow:hidden;min-height:0;}
+    .sp-search-bar{display:flex;gap:6px;}
+    .sp-search-inp{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:white;padding:8px 11px;font-size:.82rem;outline:none;transition:border-color .2s;}
+    .sp-search-inp:focus{border-color:var(--gold-border);}
+    .sp-search-inp::placeholder{color:rgba(255,255,255,.3);}
+    .sp-search-go{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:rgba(255,255,255,.7);padding:8px 13px;cursor:pointer;font-size:.82rem;transition:background .2s;}
+    .sp-search-go:hover{background:rgba(255,255,255,.14);}
+    .sp-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:1px;}
+    .sp-empty{color:rgba(255,255,255,.3);font-size:.78rem;text-align:center;padding:20px 0;}
+    .sp-row{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:7px;transition:background .15s;}
+    .sp-row:hover{background:rgba(255,255,255,.05);}
+    .sp-row-art{width:38px;height:38px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--s2);}
+    .sp-row-info{flex:1;min-width:0;}
+    .sp-row-name{font-size:.8rem;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-row-sub{font-size:.68rem;color:rgba(255,255,255,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sp-row-acts{display:flex;gap:4px;flex-shrink:0;}
+    .sp-act{padding:5px 7px;border:none;border-radius:5px;font-size:.72rem;cursor:pointer;transition:background .15s;}
+    .sp-act.play{background:var(--spotify);color:white;}
+    .sp-act.play:hover{background:#1ed760;}
+    .sp-act.add{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);}
+    .sp-modal{position:absolute;inset:0;background:rgba(8,8,8,.95);display:none;flex-direction:column;z-index:20;padding:16px;gap:10px;}
+    .sp-modal.open{display:flex;}
+    .sp-modal-hd{display:flex;justify-content:space-between;align-items:center;}
+    .sp-modal-ttl{font-size:.88rem;font-weight:700;color:white;}
+    .sp-modal-x{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px 8px;}
+    .sp-modal-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}
+    .sp-modal-item{padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;cursor:pointer;transition:background .15s;color:var(--grey);font-size:.82rem;}
+    .sp-modal-item:hover{background:rgba(255,255,255,.09);color:white;}
+    .sp-modal-empty{color:var(--muted);text-align:center;font-size:.8rem;padding:20px 0;}
+    .sp-err{text-align:center;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+    .sp-err p{color:#e8870a;font-size:.82rem;line-height:1.5;}
+    .sp-err .err-b{font-family:monospace;font-size:.68rem;color:#ccc;word-break:break-all;text-align:left;background:rgba(255,255,255,.05);border-radius:5px;padding:8px;width:100%;}
+    .sp-err .err-d{font-size:.68rem;color:var(--muted);text-align:left;width:100%;line-height:1.8;background:rgba(255,255,255,.03);border-radius:5px;padding:8px;border:1px solid rgba(255,255,255,.07);}
+    .sp-err button{background:var(--spotify);color:white;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;font-size:.82rem;font-weight:600;}
+    .game-panel{flex:0 0 50%;background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    @media(max-width:720px){.game-panel{flex:none;border-left:none;border-top:1px solid var(--border);}}
+    .gp-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+    .room-code{font-size:1.3rem;font-weight:800;letter-spacing:4px;color:var(--gold2);}
+    .share-row{display:flex;gap:6px;align-items:center;}
+    .share-url{flex:1;font-size:.68rem;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .share-copy{padding:5px 10px;background:var(--s3);border:1px solid var(--border2);border-radius:6px;color:var(--grey);font-size:.7rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
+    .share-copy:hover{color:white;border-color:var(--gold-border);}
+    .gp-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+    .buzz-block{display:none;flex-direction:column;gap:10px;margin:16px 20px 0;padding:14px 16px;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;}
+    .buzz-block.visible{display:flex;}
+    @media(max-width:720px){.buzz-block{display:none !important;}}
+    .buzz-who{display:flex;align-items:center;gap:8px;}
+    .buzz-icon-sm{font-size:1.3rem;}
+    .buzz-detail{display:flex;flex-direction:column;gap:1px;}
+    .buzz-pname{font-size:1rem;font-weight:800;color:var(--gold2);}
+    .buzz-sub{font-size:.7rem;color:var(--muted);}
+    .buzz-actions{display:flex;gap:8px;}
+    .buzz-actions .btn{flex:1;}
+    .buzz-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(8,8,8,.97);flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:32px;text-align:center;}
+    .buzz-overlay.active{display:flex;}
+    @media(min-width:721px){.buzz-overlay{display:none !important;}}
+    .buzz-ov-ring{width:110px;height:110px;border-radius:50%;background:var(--gold-bg);border:2px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:3rem;animation:buzz-in .35s cubic-bezier(.175,.885,.32,1.275);}
+    @keyframes buzz-in{0%{transform:scale(0.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
+    .buzz-ov-name{font-size:2.4rem;font-weight:900;color:var(--gold2);line-height:1.1;animation:buzz-in .35s .1s both cubic-bezier(.175,.885,.32,1.275);}
+    .buzz-ov-sub{font-size:.95rem;color:var(--muted);animation:buzz-in .3s .2s both;}
+    .buzz-ov-actions{display:flex;gap:12px;width:100%;max-width:320px;margin-top:8px;animation:buzz-in .3s .25s both;}
+    .buzz-ov-actions .btn{flex:1;padding:16px;font-size:1rem;}
+    .lb-section{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+    .lb-header{display:flex;justify-content:space-between;align-items:center;}
+    .lb-count{font-size:.7rem;color:var(--muted);}
+    .lb-list{display:flex;flex-direction:column;gap:6px;}
+    .lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px;}
+    .lb-rank{width:22px;text-align:center;font-size:.8rem;flex-shrink:0;}
+    .lb-name{flex:1;font-size:.88rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .lb-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;min-width:60px;}
+    .lb-pts{font-size:.72rem;font-weight:800;color:var(--muted);}
+    .lb-pts.scored{color:var(--gold2);}
+    .lb-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
+    .lb-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .5s ease;}
+    .lb-waiting{color:var(--muted);font-size:.82rem;text-align:center;padding:16px 0;}
+    .gp-footer{padding:14px 20px;border-top:1px solid var(--border);flex-shrink:0;}
+    #view-buzzer{max-width:100%;height:100dvh;justify-content:center;}
+    .buzzer-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;padding:40px 24px;min-height:100dvh;}
+    .buzzer-pname{font-size:.9rem;color:var(--muted);font-weight:500;letter-spacing:.5px;}
+    #buzzer-btn{width:min(72vw,280px);height:min(72vw,280px);border-radius:50%;background:linear-gradient(135deg,#2a1f6e,#4a3aaa);border:none;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:white;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background .3s,box-shadow .3s,transform .1s;box-shadow:0 0 0 12px rgba(124,106,247,.1),0 0 60px rgba(124,106,247,.25);-webkit-tap-highlight-color:transparent;user-select:none;}
+    #buzzer-btn:active:not(.green):not(.red){transform:scale(.92);}
+    #buzzer-btn.green{background:linear-gradient(135deg,#166534,#22c55e);box-shadow:0 0 0 16px rgba(34,197,94,.1),0 0 80px rgba(34,197,94,.35);cursor:default;}
+    #buzzer-btn.red{background:linear-gradient(135deg,#7f1d1d,#ef4444);box-shadow:0 0 0 12px rgba(239,68,68,.08),0 0 50px rgba(239,68,68,.2);cursor:default;}
+    #buzzer-btn.penalty{font-size:2.8rem;letter-spacing:0;}
+    #buzzer-status{font-size:1rem;text-align:center;font-weight:500;color:var(--muted);min-height:1.5em;max-width:260px;line-height:1.5;}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:10px 20px;border-radius:100px;font-size:.84rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;max-width:90vw;text-align:center;}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="buzz-overlay" id="buzz-overlay">
+  <div class="buzz-ov-ring">⚡</div>
+  <div class="buzz-ov-name" id="buzz-ov-name">—</div>
+  <div class="buzz-ov-sub">a wizzé en premier !</div>
+  <div class="buzz-ov-actions">
+    <button class="btn btn-success" onclick="awardPoint()">✅ Gagné</button>
+    <button class="btn btn-danger" onclick="penalizePlayer()">❌ Perdu</button>
+  </div>
+</div>
+
+<!-- ACCUEIL -->
+<div id="view-home" class="view active">
+  <div class="home-wrap">
+    <div class="home-hero">
+      <!-- Plateau tourne-disque + vinyle qui tourne -->
+      <div class="home-vinyl-stage">
+        <div class="home-platter"></div>
+        <div class="home-vinyl">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="104" height="104">
+            <defs>
+              <radialGradient id="vlbl" cx="38%" cy="35%">
+                <stop offset="0%" stop-color="#e8a80c"/>
+                <stop offset="100%" stop-color="#9a6508"/>
+              </radialGradient>
+              <radialGradient id="vshine" cx="32%" cy="28%">
+                <stop offset="0%" stop-color="rgba(255,255,255,.07)"/>
+                <stop offset="60%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="49" fill="#111"/>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#1e1e1e" stroke-width="0.8"/>
+            <circle cx="50" cy="50" r="43" fill="none" stroke="#252525" stroke-width="1.2"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#1e1e1e" stroke-width="0.8"/>
+            <circle cx="50" cy="50" r="37" fill="none" stroke="#252525" stroke-width="1"/>
+            <circle cx="50" cy="50" r="34" fill="none" stroke="#1e1e1e" stroke-width="0.8"/>
+            <circle cx="50" cy="50" r="31" fill="none" stroke="#252525" stroke-width="1"/>
+            <circle cx="50" cy="50" r="28" fill="none" stroke="#1e1e1e" stroke-width="0.6"/>
+            <circle cx="50" cy="50" r="19" fill="url(#vlbl)"/>
+            <line x1="38" y1="47" x2="62" y2="47" stroke="rgba(0,0,0,.2)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="40" y1="51" x2="60" y2="51" stroke="rgba(0,0,0,.18)" stroke-width="0.9" stroke-linecap="round"/>
+            <line x1="42" y1="55" x2="58" y2="55" stroke="rgba(0,0,0,.18)" stroke-width="0.9" stroke-linecap="round"/>
+            <circle cx="50" cy="50" r="3.2" fill="#0c0c0c"/>
+            <circle cx="50" cy="50" r="49" fill="url(#vshine)"/>
+          </svg>
+        </div>
+      </div>
+      <h1 class="home-title">Le Jeu des Disques</h1>
+      <p class="home-tagline">Powered by Papy Jacques since 1955</p>
+    </div>
+    <div class="home-card">
+      <div class="home-fields">
+        <input id="inp-room" class="home-inp" type="text" placeholder="Code de salle  (ex : DISCO42)" maxlength="12" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:2px;">
+        <input id="inp-name" class="home-inp" type="text" placeholder="Ton prénom" maxlength="20">
+      </div>
+      <div class="home-role-section">
+        <div class="home-role-lbl">Je suis</div>
+        <div class="home-role-row">
+          <div class="home-rc active" data-role="guesser">
+            <span class="rc-icon">🎧</span>
+            <span class="rc-name">Joueur</span>
+            <span class="rc-desc">J'écoute et je wizze</span>
+          </div>
+          <div class="home-rc" data-role="dj">
+            <span class="rc-icon">🎵</span>
+            <span class="rc-name">DJ</span>
+            <span class="rc-desc">Je gère la musique</span>
+          </div>
+        </div>
+      </div>
+      <div class="home-cta">
+        <button id="join-btn" class="home-btn">Rejoindre la salle →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VUE DJ -->
+<div id="view-dj" class="view">
+  <div class="sp-panel">
+    <div class="sp-bg" id="sp-bg"></div>
+    <div class="sp-disconnected sp-z" id="sp-disconnected">
+      <div class="sp-disco-icon">💿</div>
+      <p class="sp-disco-text">Connecte Spotify pour accéder au lecteur</p>
+      <button id="btn-spotify" class="btn btn-spotify" style="max-width:250px;">🔗 Connecter Spotify</button>
+    </div>
+    <div id="sp-connected" style="display:none;flex-direction:column;gap:10px;flex:1;overflow:hidden;">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;" class="sp-z">
+        <div class="sp-badge" id="spotify-ok" style="display:flex;">✓ Connecté</div>
+        <button class="sp-notif" id="notif-btn" onclick="requestNotifPermission()">🔔 Alertes</button>
+        <button class="sp-reauth" onclick="reauthorizeSpotify()">🔑 Droits</button>
+      </div>
+      <div class="sp-now-playing sp-z">
+        <div class="sp-art-ph" id="sp-art-ph">💿</div>
+        <img id="sp-art" class="sp-art-sm" src="" alt="" style="display:none;">
+        <div class="sp-now-info">
+          <div class="sp-track" id="sp-track-name">Rien en lecture</div>
+          <div class="sp-artist" id="sp-artist-name">—</div>
+          <div class="sp-prog-row">
+            <div class="sp-prog-bar"><div class="sp-prog-fill" id="sp-prog-fill"></div></div>
+            <div class="sp-times"><span id="sp-t-curr">0:00</span><span id="sp-t-tot">0:00</span></div>
+          </div>
+        </div>
+        <div class="sp-ctrl">
+          <button class="sp-c" id="sp-prev">⏮</button>
+          <button class="sp-c main" id="sp-pp">▶</button>
+          <button class="sp-c" id="sp-next">⏭</button>
+        </div>
+      </div>
+      <div class="sp-next sp-z" id="sp-next-track">
+        <span class="sp-next-lbl">Suivant</span>
+        <img id="sp-next-art" class="sp-next-art" src="" alt="">
+        <div style="min-width:0;flex:1;"><div class="sp-next-name" id="sp-next-name"></div><div class="sp-next-art2" id="sp-next-artist"></div></div>
+      </div>
+      <div class="sp-search-section sp-z">
+        <div class="sp-tabs">
+          <button class="sp-tab active" id="tab-search-btn" onclick="switchTab('search')">🔍 Rechercher</button>
+          <button class="sp-tab" id="tab-pl-btn" onclick="switchTab('playlists')">🎵 Mes playlists</button>
+        </div>
+        <div class="sp-tab-panel" id="sp-tab-search">
+          <div class="sp-search-bar">
+            <input class="sp-search-inp" id="sp-search-inp" type="text" placeholder="Chanson, artiste…">
+            <button class="sp-search-go" id="sp-search-btn">OK</button>
+          </div>
+          <div class="sp-results" id="sp-results"><p class="sp-empty">Tape un titre pour commencer</p></div>
+        </div>
+        <div class="sp-tab-panel" id="sp-tab-playlists" style="display:none;">
+          <div class="sp-results" id="sp-pl-inline"><p class="sp-empty">Chargement…</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="sp-modal" id="sp-pl-modal">
+      <div class="sp-modal-hd"><span class="sp-modal-ttl">Ajouter à une playlist</span><button class="sp-modal-x" id="sp-pl-close">✕</button></div>
+      <div class="sp-modal-list" id="sp-pl-list"><p class="sp-modal-empty">Chargement…</p></div>
+    </div>
+  </div>
+  <div class="game-panel">
+    <div class="gp-header">
+      <div class="room-code" id="dj-room-code">—</div>
+      <div class="share-row">
+        <div class="share-url" id="share-link-text">—</div>
+        <button class="share-copy" id="copy-btn">Copier</button>
+      </div>
+    </div>
+    <div class="gp-body">
+      <div class="buzz-block" id="buzz-block">
+        <div class="buzz-who"><span class="buzz-icon-sm">⚡</span><div class="buzz-detail"><div class="buzz-pname" id="buzz-pname">—</div><div class="buzz-sub">a wizzé en premier !</div></div></div>
+        <div class="buzz-actions"><button id="btn-gagner" class="btn btn-success btn-sm">✅ Gagné</button><button id="btn-perdu" class="btn btn-danger btn-sm">❌ Perdu</button></div>
+      </div>
+      <div class="lb-section">
+        <div class="lb-header"><span class="label">Classement</span><span class="lb-count" id="lb-count"></span></div>
+        <div class="lb-list" id="players-list"><p class="lb-waiting">En attente des joueurs…</p></div>
+      </div>
+    </div>
+    <div class="gp-footer"><button id="reset-btn" class="btn btn-ghost btn-sm">🔄 Nouvelle manche</button></div>
+  </div>
+</div>
+
+<!-- BUZZER -->
+<div id="view-buzzer" class="view">
+  <div class="buzzer-wrap">
+    <div class="buzzer-pname" id="buzzer-name"></div>
+    <button id="buzzer-btn">WIZZ!</button>
+    <div id="buzzer-status">Écoute et wizze quand tu reconnais !</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+const SPOTIFY_CLIENT_ID='2ae731ad8841465ca9b2664ff1e9a34e';
+const FIREBASE_CONFIG={apiKey:'AIzaSyB1wKfBPXkdvw7IDCVzggxHUM0efNFXK_E',authDomain:'blind-test-buzzer.firebaseapp.com',databaseURL:'https://blind-test-buzzer-default-rtdb.europe-west1.firebasedatabase.app',projectId:'blind-test-buzzer',storageBucket:'blind-test-buzzer.firebasestorage.app',messagingSenderId:'1081541224928',appId:'1:1081541224928:web:e2874c91fa3be5bc7aa385'};
+const REDIRECT_URI=window.location.origin+window.location.pathname;
+const SPOTIFY_SCOPE='user-modify-playback-state user-read-playback-state user-read-currently-playing playlist-read-private playlist-modify-public playlist-modify-private';
+let G={room:null,name:null,role:'guesser',pid:null,token:null,roundPaused:false,currentBuzzedBy:null,isPlaying:false,userId:null,activeDeviceId:null,grantedScopes:''};
+let pendingAddTrackUri=null,_lastBuzzedBy=null;
+firebase.initializeApp(FIREBASE_CONFIG);
+const db=firebase.database();
+const $=id=>document.getElementById(id);
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');document.body.classList.toggle('dj-mode',id==='view-dj');}
+let _tt;
+function toast(msg,ms=4000){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),ms);}
+function uid(){return Math.random().toString(36).slice(2,11)+Date.now().toString(36);}
+function fmtTime(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function b64url(buf){return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');}
+function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);return b64url(a.buffer);}
+async function genChallenge(v){return b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+let _wl=null;
+async function acquireWakeLock(){if(!('wakeLock' in navigator))return;try{_wl=await navigator.wakeLock.request('screen');_wl.addEventListener('release',()=>{_wl=null;});}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G.role==='dj'&&!_wl)acquireWakeLock();});
+let _actx=null;
+function getACtx(){if(!_actx)try{_actx=new AudioContext();}catch(e){}return _actx;}
+function playBuzz(){const ctx=getACtx();if(!ctx)return;try{if(ctx.state==='suspended')ctx.resume();const ding=(t)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=1320;g.gain.setValueAtTime(0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.start(t);o.stop(t+0.4);};ding(ctx.currentTime);ding(ctx.currentTime+0.22);}catch(e){}}
+async function requestNotifPermission(){if(!('Notification' in window)){toast('⚠️ Notifications non supportées');return;}const p=await Notification.requestPermission();if(p==='granted'){toast('🔔 Alertes activées !');$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}else toast('⚠️ Alertes refusées');}
+function showBuzzNotif(name){if(!('Notification' in window)||Notification.permission!=='granted')return;try{const n=new Notification('⚡ WIZZ !',{body:name+' a wizzé en premier !',tag:'buzz',renotify:true,requireInteraction:true});n.onclick=()=>{window.focus();n.close();};setTimeout(()=>n.close(),30000);}catch(e){}}
+async function startSpotifyAuth(showDialog=false){const v=genVerifier(),c=await genChallenge(v);localStorage.setItem('spv',v);localStorage.setItem('sr',G.room);localStorage.setItem('sn',G.name);localStorage.setItem('spid',G.pid);localStorage.setItem('sp_ts',Date.now().toString());const p={client_id:SPOTIFY_CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,code_challenge_method:'S256',code_challenge:c,scope:SPOTIFY_SCOPE};if(showDialog)p.show_dialog='true';window.location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams(p);}
+async function exchangeCode(code){const v=localStorage.getItem('spv');if(!v){toast('❌ Erreur OAuth.');return null;}localStorage.removeItem('spv');localStorage.removeItem('sp_ts');const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});if(!res.ok){let b='';try{b=await res.text();}catch(e){}toast('❌ Spotify ('+res.status+'): '+(b.includes('redirect_uri')?'Redirect URI incorrect.':b.slice(0,80)));return null;}const td=await res.json();G.grantedScopes=td.scope||'';return td.access_token||null;}
+async function spFetch(method,path,body){if(!G.token)return null;try{const opts={method,headers:{Authorization:`Bearer ${G.token}`}};if(body){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body);}const res=await fetch('https://api.spotify.com/v1'+path,opts);if(res.status===401){G.token=null;toast('⚠️ Session expirée');}return res;}catch(e){toast('⚠️ Erreur réseau');return null;}}
+async function ensureUserId(){if(G.userId)return G.userId;const r=await spFetch('GET','/me');if(r?.status===200)G.userId=(await r.json()).id;return G.userId;}
+async function getActiveDevice(){try{const r=await spFetch('GET','/me/player/devices');if(!r||r.status!==200)return null;const devs=(await r.json()).devices||[];const a=devs.find(d=>d.is_active);if(a){G.activeDeviceId=a.id;return a.id;}if(devs.length){await spFetch('PUT','/me/player',{device_ids:[devs[0].id],play:false});G.activeDeviceId=devs[0].id;await new Promise(r=>setTimeout(r,500));return devs[0].id;}}catch(e){}return null;}
+async function spotifyPause(force=false){if(!G.token)return;if(G.roundPaused&&!force)return;G.roundPaused=false;const r=await spFetch('PUT','/me/player/pause');if(!r)return;if(r.status===204||r.status===202){G.roundPaused=true;G.isPlaying=false;$('sp-pp').textContent='▶';}else if(r.status===403)toast('⚠️ Spotify Premium requis');else if(r.status===404)toast('⚠️ Aucun appareil Spotify actif');}
+async function spotifyPlay(uri){const body=uri?{uris:[uri]}:undefined;let r=await spFetch('PUT','/me/player/play',body);if(!r)return;if(r.status===404){toast('🔍 Recherche appareil…');const dId=await getActiveDevice();if(!dId){toast('⚠️ Ouvre Spotify sur un appareil');return;}const pb=uri?{uris:[uri],device_id:dId}:{device_id:dId};r=await spFetch('PUT','/me/player/play',pb);}if(!r)return;if(r.status===204||r.status===202){G.isPlaying=true;$('sp-pp').textContent='⏸';if(!uri)toast('▶ Reprise !');setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}else if(r.status===403)toast('⚠️ Premium requis');else toast('⚠️ Erreur Spotify ('+r.status+')');}
+async function playPlaylist(id,name){const body={context_uri:`spotify:playlist:${id}`};let r=await spFetch('PUT','/me/player/play',body);if(!r)return;if(r.status===404){const dId=await getActiveDevice();if(!dId){toast('⚠️ Ouvre Spotify');return;}r=await spFetch('PUT','/me/player/play',{...body,device_id:dId});}if(!r)return;if(r.status===204||r.status===202){G.isPlaying=true;$('sp-pp').textContent='⏸';toast('▶ '+name);setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}else toast('⚠️ Erreur ('+r.status+')');}
+async function spotifyNext(){await spFetch('POST','/me/player/next');setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}
+async function spotifyPrev(){await spFetch('POST','/me/player/previous');setTimeout(fetchState,800);setTimeout(fetchQueue,1500);}
+let _poller=null,_progTimer=null,_lastTrack=null,_qc=0;
+async function fetchState(){if(!G.token)return;const r=await spFetch('GET','/me/player');if(!r)return;if(r.status===204){updateNP(null,false,0,0);return;}if(r.status!==200)return;const d=await r.json();if(!d||!d.item){updateNP(null,false,0,0);return;}G.isPlaying=d.is_playing;if(d.device)G.activeDeviceId=d.device.id;updateNP(d.item,d.is_playing,d.progress_ms,d.item.duration_ms);startProg(d.is_playing,d.progress_ms,d.item.duration_ms);}
+async function fetchQueue(){if(!G.token)return;const r=await spFetch('GET','/me/player/queue');if(!r||r.status!==200){$('sp-next-track').style.display='none';return;}let data;try{data=await r.json();}catch(e){return;}const next=data.queue?.[0];if(next){const art=next.album?.images?.[2]?.url||next.album?.images?.[0]?.url||'';$('sp-next-art').src=art;$('sp-next-name').textContent=next.name||'—';$('sp-next-artist').textContent=next.artists?.map(a=>a.name).join(', ')||'';$('sp-next-track').style.display='flex';}else $('sp-next-track').style.display='none';}
+function updateNP(track,isPlaying,prog,dur){if(!track){$('sp-track-name').textContent='Rien en lecture';$('sp-artist-name').textContent='—';$('sp-prog-fill').style.width='0%';$('sp-t-curr').textContent='0:00';$('sp-t-tot').textContent='0:00';$('sp-pp').textContent='▶';$('sp-next-track').style.display='none';return;}const art=track.album.images[0]?.url;if(art&&track.id!==_lastTrack){_lastTrack=track.id;const img=$('sp-art');img.onload=()=>{img.style.display='block';$('sp-art-ph').style.display='none';};img.src=art;$('sp-bg').style.backgroundImage=`url(${art})`;}$('sp-track-name').textContent=track.name;$('sp-artist-name').textContent=track.artists.map(a=>a.name).join(', ');$('sp-pp').textContent=isPlaying?'⏸':'▶';const pct=dur>0?(prog/dur)*100:0;$('sp-prog-fill').style.transition='none';$('sp-prog-fill').style.width=pct+'%';$('sp-t-curr').textContent=fmtTime(prog);$('sp-t-tot').textContent=fmtTime(dur);}
+function startProg(isPlaying,startMs,dur){if(_progTimer){clearInterval(_progTimer);_progTimer=null;}if(!isPlaying)return;const t0=Date.now();_progTimer=setInterval(()=>{const curr=Math.min(startMs+(Date.now()-t0),dur);$('sp-prog-fill').style.transition='width 1s linear';$('sp-prog-fill').style.width=(curr/dur*100)+'%';$('sp-t-curr').textContent=fmtTime(curr);if(curr>=dur){clearInterval(_progTimer);_progTimer=null;setTimeout(()=>{fetchState();fetchQueue();},1200);}},1000);}
+function startPoller(){if(_poller)return;fetchState();fetchQueue();_poller=setInterval(()=>{fetchState();_qc++;if(_qc%2===0)fetchQueue();},5000);}
+function switchTab(tab){const s=tab==='search';$('tab-search-btn').classList.toggle('active',s);$('tab-pl-btn').classList.toggle('active',!s);$('sp-tab-search').style.display=s?'flex':'none';$('sp-tab-playlists').style.display=s?'none':'flex';if(!s)loadPlTab();}
+async function loadPlTab(){const c=$('sp-pl-inline');c.innerHTML='<p class="sp-empty">Chargement…</p>';await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');if(!r||r.status!==200){c.innerHTML='<p class="sp-empty">⚠️ Erreur ('+r?.status+')</p>';return;}let json;try{json=await r.json();}catch(e){c.innerHTML='<p class="sp-empty">⚠️ Illisible</p>';return;}const pls=json.items||[];c.innerHTML='';if(!pls.length){c.innerHTML='<p class="sp-empty">Aucune playlist</p>';return;}pls.forEach(pl=>{if(!pl||!pl.id)return;const row=document.createElement('div');row.className='sp-row';const art=pl.images?.[0]?.url||'';row.innerHTML=`<img class="sp-row-art" src="${art}" alt="" onerror="this.style.display='none'"><div class="sp-row-info"><div class="sp-row-name">${esc(pl.name)}</div><div class="sp-row-sub">${pl.tracks?.total??'?'} titres</div></div><button class="sp-act play">▶</button>`;row.querySelector('.play').onclick=()=>playPlaylist(pl.id,pl.name);c.appendChild(row);});}
+let _sd=null;
+async function searchSpotify(q){if(!q.trim()){$('sp-results').innerHTML='<p class="sp-empty">Tape un titre pour commencer</p>';return;}$('sp-results').innerHTML='<p class="sp-empty">Recherche…</p>';const r=await spFetch('GET',`/search?q=${encodeURIComponent(q)}&type=track&limit=10`);if(!r||r.status!==200){$('sp-results').innerHTML='<p class="sp-empty">Erreur ('+r?.status+')</p>';return;}const tracks=(await r.json()).tracks?.items||[];const c=$('sp-results');if(!tracks.length){c.innerHTML='<p class="sp-empty">Aucun résultat</p>';return;}c.innerHTML='';tracks.forEach(t=>{const art=t.album?.images?.[2]?.url||t.album?.images?.[0]?.url||'';const row=document.createElement('div');row.className='sp-row';row.innerHTML=`<img class="sp-row-art" src="${art}" alt=""><div class="sp-row-info"><div class="sp-row-name">${esc(t.name)}</div><div class="sp-row-sub">${esc(t.artists?.map(a=>a.name).join(', ')||'')}</div></div><div class="sp-row-acts"><button class="sp-act play">▶</button><button class="sp-act add">+</button></div>`;row.querySelector('.play').onclick=()=>spotifyPlay(t.uri);row.querySelector('.add').onclick=()=>openPlModal(t.uri);c.appendChild(row);});}
+async function showPlError(status,raw,trackUri,plId){const disp=raw||'(vide)';let diag='';if(status===403){$('sp-pl-list').innerHTML='<div class="sp-err"><p>⏳ Diagnostic…</p></div>';try{const[pr,mr]=await Promise.all([spFetch('GET',`/playlists/${plId}?fields=public,collaborative,owner`),spFetch('GET','/me')]);const pd=pr?.status===200?await pr.json():null,md=mr?.status===200?await mr.json():null;const pub=pd?.public,own=pd?.owner?.id||'?',me=md?.id||G.userId||'?';const ns=pub?'playlist-modify-public':'playlist-modify-private',sc=G.grantedScopes||'';const ok=sc.includes('playlist-modify-public')&&sc.includes('playlist-modify-private');diag=`<div class="err-d">📋 ${pub?'publique':pub===false?'privée':'?'} · ${own===me?'✅ tu es proprio':'❌ pas toi'}<br>${ok?'✅ Scopes OK':'❌ Scope manquant: '+esc(ns)}</div>`;}catch(e){diag='<div class="err-d">⚠️ Diagnostic échoué</div>';}}$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur ${status}</p><div class="err-b">${esc(disp)}</div>${diag}<button onclick="reauthorizeSpotify()">🔗 Re-autoriser</button></div>`;}
+async function openPlModal(trackUri){if(!trackUri||!trackUri.startsWith('spotify:')){toast('⚠️ URI invalide');return;}pendingAddTrackUri=trackUri;$('sp-pl-modal').classList.add('open');$('sp-pl-list').innerHTML='<p class="sp-modal-empty">Chargement…</p>';const userId=await ensureUserId();const r=await spFetch('GET','/me/playlists?limit=50');if(!r||r.status!==200){$('sp-pl-list').innerHTML=`<div class="sp-err"><p>⚠️ Erreur (${r?.status})</p><button onclick="reauthorizeSpotify()">🔗 Reconnecter</button></div>`;return;}let json;try{json=await r.json();}catch(e){$('sp-pl-list').innerHTML='<p class="sp-modal-empty">⚠️ Illisible</p>';return;}const owned=(json.items||[]).filter(pl=>pl&&pl.id&&pl.name&&(pl.owner?.id===userId||pl.collaborative));const list=$('sp-pl-list');list.innerHTML='';if(!owned.length){list.innerHTML='<p class="sp-modal-empty">Aucune playlist modifiable</p>';return;}owned.forEach(pl=>{try{const item=document.createElement('div');item.className='sp-modal-item';item.textContent='💿 '+pl.name+' ('+(pl.tracks?.total??'?')+' titres)';item.onclick=async()=>{const orig=item.textContent;item.textContent='⏳…';item.style.opacity='.6';const r1=await spFetch('POST',`/playlists/${pl.id}/items`,{uris:[pendingAddTrackUri]});let raw1='';if(r1)try{raw1=await r1.text();}catch(e){}if(r1?.status===201||r1?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}const r2=await spFetch('POST',`/playlists/${pl.id}/items?uris=${encodeURIComponent(pendingAddTrackUri)}`);let raw2='';if(r2)try{raw2=await r2.text();}catch(e){}if(r2?.status===201||r2?.status===200){toast('✅ Ajouté à "'+pl.name+'" !');$('sp-pl-modal').classList.remove('open');return;}item.textContent=orig;item.style.opacity='1';await showPlError(r1?.status||r2?.status||'?',raw1||raw2,pendingAddTrackUri,pl.id);};list.appendChild(item);}catch(e){}});}
+function reauthorizeSpotify(){$('sp-pl-modal').classList.remove('open');G.token=null;G.userId=null;G.grantedScopes='';if(_poller){clearInterval(_poller);_poller=null;}if(_progTimer){clearInterval(_progTimer);_progTimer=null;}toast('🔄 Redirection…',3000);setTimeout(()=>startSpotifyAuth(true),800);}
+function rRef(path){return db.ref(`rooms/${G.room}${path?'/'+path:''}`);}
+function joinRoom(){const ref=rRef(`players/${G.pid}`);ref.set({name:G.name,role:G.role,at:Date.now()});ref.onDisconnect().remove();}
+async function doBuzz(){const r=await rRef('buzzedBy').transaction(cur=>{if(cur!==null&&cur!==undefined)return undefined;return G.pid;});if(r.committed)rRef().update({buzzedBy:G.pid,status:'buzzed'});return r.committed;}
+let lastPlayers={};
+async function awardPoint(){const w=G.currentBuzzedBy;if(!w)return;await rRef(`scores/${w}`).transaction(cur=>(cur||0)+1);await rRef().update({buzzedBy:null,status:'waiting',penalties:null});G.roundPaused=false;toast('🏆 Point accordé à '+(lastPlayers[w]?.name||'?')+' !');}
+async function penalizePlayer(){const l=G.currentBuzzedBy;if(!l)return;await rRef().update({buzzedBy:null,status:'waiting',[`penalties/${l}`]:Date.now()});G.roundPaused=false;await spotifyPlay();toast('❌ Pénalité pour '+(lastPlayers[l]?.name||'?')+' !');}
+async function resetRound(){G.roundPaused=false;await rRef().update({buzzedBy:null,status:'waiting',penalties:null});toast('🔄 Nouvelle manche !');}
+function renderLeaderboard(guessers,scores){const list=$('players-list');list.innerHTML='';if(!guessers.length){list.innerHTML='<p class="lb-waiting">En attente des joueurs…</p>';$('lb-count').textContent='';return;}$('lb-count').textContent=guessers.length+' joueur'+(guessers.length>1?'s':'');const sorted=[...guessers].sort(([a],[b])=>(scores[b]||0)-(scores[a]||0));const maxPts=Math.max(1,...sorted.map(([id])=>scores[id]||0));const medals=['🥇','🥈','🥉'];sorted.forEach(([id,p],i)=>{const pts=scores[id]||0,pct=pts>0?Math.round(pts/maxPts*100):0,isTop=i<3&&pts>0;const row=document.createElement('div');row.className='lb-row';row.innerHTML=`<span class="lb-rank">${isTop?medals[i]:(i+1)}</span><span class="lb-name">${esc(p.name)}</span><div class="lb-right"><span class="lb-pts${pts>0?' scored':''}">${pts} pt${pts>1?'s':''}</span>${pts>0?`<div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>`:''}</div>`;list.appendChild(row);});}
+function setupDJView(){showView('view-dj');G.roundPaused=false;_lastBuzzedBy=null;acquireWakeLock();document.addEventListener('click',()=>{getACtx();},{once:true});const shareUrl=`${REDIRECT_URI}?room=${G.room}`;$('dj-room-code').textContent=G.room;$('share-link-text').textContent=shareUrl;$('copy-btn').onclick=()=>navigator.clipboard?.writeText(shareUrl).then(()=>toast('🔗 Lien copié !')).catch(()=>toast(shareUrl));if(G.token){$('sp-disconnected').style.display='none';$('sp-connected').style.display='flex';startPoller();}else{$('btn-spotify').onclick=startSpotifyAuth;}$('sp-pp').onclick=()=>{if(G.isPlaying)spotifyPause(true);else spotifyPlay();};$('sp-prev').onclick=spotifyPrev;$('sp-next').onclick=spotifyNext;$('sp-pl-close').onclick=()=>$('sp-pl-modal').classList.remove('open');const si=$('sp-search-inp');si.addEventListener('input',()=>{clearTimeout(_sd);_sd=setTimeout(()=>searchSpotify(si.value),500);});$('sp-search-btn').onclick=()=>searchSpotify(si.value);si.addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify(si.value);});$('reset-btn').onclick=resetRound;$('btn-gagner').onclick=awardPoint;$('btn-perdu').onclick=penalizePlayer;if('Notification' in window&&Notification.permission==='granted'){$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}rRef().on('value',snap=>{const data=snap.val()||{},players=data.players||{},scores=data.scores||{};const buzzedBy=data.buzzedBy??null,penalties=data.penalties||{};lastPlayers=players;G.currentBuzzedBy=buzzedBy;const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');renderLeaderboard(guessers,scores);if(buzzedBy){const w=players[buzzedBy],name=w?.name||'Un joueur';if(buzzedBy!==_lastBuzzedBy){playBuzz();if(navigator.vibrate)navigator.vibrate([200,80,200,80,200]);showBuzzNotif(name);}$('buzz-pname').textContent=name;$('buzz-ov-name').textContent=name;$('buzz-block').classList.add('visible');$('buzz-overlay').classList.add('active');$('reset-btn').style.display='none';if(!G.roundPaused)spotifyPause();}else{$('buzz-block').classList.remove('visible');$('buzz-overlay').classList.remove('active');$('reset-btn').style.display='';}_lastBuzzedBy=buzzedBy;});}
+function setupBuzzerView(){showView('view-buzzer');$('buzzer-name').textContent=G.name;const btn=$('buzzer-btn'),st=$('buzzer-status');let canBuzz=true,penTimer=null,penStart=null;function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);}btn.onclick=async()=>{if(!canBuzz)return;if(navigator.vibrate)navigator.vibrate(80);await doBuzz();};rRef().on('value',snap=>{const data=snap.val()||{},buzzedBy=data.buzzedBy??null,myPen=(data.penalties||{})[G.pid]??null,players=data.players||{};if(myPen&&myPen!==penStart){startPenalty(myPen);return;}if(penStart)return;if(!buzzedBy){btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}else if(buzzedBy===G.pid){btn.className='green';btn.textContent='🏆';st.textContent='Tu as wizzé en premier !';canBuzz=false;if(navigator.vibrate)navigator.vibrate([100,50,150]);}else{const winner=players[buzzedBy];btn.className='red';btn.textContent='✗';st.textContent=(winner?.name||'Quelqu\'un')+' a été plus rapide que toi !';canBuzz=false;}});}
+const urlP=new URLSearchParams(window.location.search);
+if(urlP.get('room'))$('inp-room').value=urlP.get('room').toUpperCase();
+$('inp-room').addEventListener('input',function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');});
+document.querySelectorAll('.home-rc').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.home-rc').forEach(x=>x.classList.remove('active'));b.classList.add('active');G.role=b.dataset.role;};});
+$('join-btn').onclick=()=>{const room=$('inp-room').value.trim(),name=$('inp-name').value.trim();if(!room)return toast('⚠️ Entre un code de salle');if(!name)return toast('⚠️ Entre ton prénom');G.room=room;G.name=name;G.pid=uid();joinRoom();if(G.role==='dj')setupDJView();else setupBuzzerView();};
+async function init(){const params=new URLSearchParams(window.location.search);const code=params.get('code'),error=params.get('error');function restore(){G.room=localStorage.getItem('sr');G.name=localStorage.getItem('sn');G.role='dj';G.pid=localStorage.getItem('spid')||uid();['sr','sn','spid'].forEach(k=>localStorage.removeItem(k));}if(error){window.history.replaceState({},'' ,window.location.pathname);restore();['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));const desc=params.get('error_description')||error;const msg=error==='access_denied'?'❌ Autorisation refusée.':'❌ Erreur: '+desc;if(G.room&&G.name){joinRoom();setupDJView();setTimeout(()=>toast(msg,8000),500);}else toast(msg,8000);return;}if(!code)return;window.history.replaceState({},'' ,window.location.pathname);restore();if(!G.room||!G.name){['spv','sp_ts'].forEach(k=>localStorage.removeItem(k));toast('❌ Session perdue — recommence');return;}toast('🔄 Connexion Spotify…');G.token=await exchangeCode(code);joinRoom();setupDJView();}
+init();
+</script>
+</body>
+</html>
+
