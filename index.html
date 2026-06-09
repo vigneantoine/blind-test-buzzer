@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0c0c0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15.5' fill='%23111'/><circle cx='16' cy='16' r='12' fill='none' stroke='%23262626' stroke-width='2.5'/><circle cx='16' cy='16' r='8.5' fill='none' stroke='%23222' stroke-width='1.5'/><circle cx='16' cy='16' r='5.5' fill='%23c8900a'/><circle cx='16' cy='16' r='1.8' fill='%230c0c0c'/></svg>">
   <title>Le Jeu des Disques</title>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -193,14 +194,13 @@
     <button class="btn btn-danger" onclick="penalizePlayer()">❌ Perdu</button>
   </div>
 </div>
-<!-- ACCUEIL -->
 <div id="view-home" class="view active">
   <div class="home-wrap">
     <div class="home-hero">
       <div class="home-vinyl-stage">
         <div class="home-platter"></div>
         <div class="home-vinyl">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="104" height="104">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <radialGradient id="vlbl" cx="38%" cy="35%"><stop offset="0%" stop-color="#e8a80c"/><stop offset="100%" stop-color="#9a6508"/></radialGradient>
               <radialGradient id="vshine" cx="32%" cy="28%"><stop offset="0%" stop-color="rgba(255,255,255,.07)"/><stop offset="60%" stop-color="rgba(255,255,255,0)"/></radialGradient>
@@ -241,7 +241,6 @@
     </div>
   </div>
 </div>
-<!-- VUE DJ -->
 <div id="view-dj" class="view">
   <div class="sp-panel">
     <div class="sp-bg" id="sp-bg"></div>
@@ -307,7 +306,6 @@
     </div>
   </div>
 </div>
-<!-- BUZZER -->
 <div id="view-buzzer" class="view">
   <div class="buzzer-wrap">
     <div class="buzzer-top">
@@ -344,13 +342,13 @@ function genVerifier(){const a=new Uint8Array(64);crypto.getRandomValues(a);retu
 async function genChallenge(v){return b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 let _wl=null;
-async function acquireWakeLock(){if(!('wakeLock' in navigator))return;try{_wl=await navigator.wakeLock.request('screen');_wl.addEventListener('release',()=>{_wl=null;});}catch(e){}}
+async function acquireWakeLock(){try{_wl=await navigator?.wakeLock?.request('screen');_wl?.addEventListener('release',()=>{_wl=null;});}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G.role==='dj'&&!_wl)acquireWakeLock();});
 let _actx=null;
 function getACtx(){if(!_actx)try{_actx=new AudioContext();}catch(e){}return _actx;}
 function playBuzz(){const ctx=getACtx();if(!ctx)return;try{if(ctx.state==='suspended')ctx.resume();const ding=(t)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=1320;g.gain.setValueAtTime(0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.start(t);o.stop(t+0.4);};ding(ctx.currentTime);ding(ctx.currentTime+0.22);}catch(e){}}
-async function requestNotifPermission(){if(!('Notification' in window)){toast('⚠️ Notifications non supportées');return;}const p=await Notification.requestPermission();if(p==='granted'){toast('🔔 Alertes activées !');$('notif-btn').classList.add('ok');$('notif-btn').textContent='🔔 Actives';}else toast('⚠️ Alertes refusées');}
-function showBuzzNotif(name){if(!('Notification' in window)||Notification.permission!=='granted')return;try{const n=new Notification('⚡ WIZZ !',{body:name+' a wizzé en premier !',tag:'buzz',renotify:true,requireInteraction:true});n.onclick=()=>{window.focus();n.close();};setTimeout(()=>n.close(),30000);}catch(e){}}
+async function requestNotifPermission(){if(!window.Notification)return toast('⚠️ Non supporté sur ce navigateur');const b=$('notif-btn');if(await Notification.requestPermission()==='granted'){toast('🔔 Alertes activées !');b.classList.add('ok');b.textContent='🔔 Actives';}else toast('⚠️ Alertes refusées');}
+function showBuzzNotif(n){if(Notification?.permission!=='granted')return;try{const x=new Notification('⚡ WIZZ !',{body:n+' a wizzé !',tag:'buzz',renotify:true,requireInteraction:true});x.onclick=()=>{window.focus();x.close();};setTimeout(()=>x.close(),30000);}catch(e){}}
 async function startSpotifyAuth(showDialog=false){const v=genVerifier(),c=await genChallenge(v);localStorage.setItem('spv',v);localStorage.setItem('sr',G.room);localStorage.setItem('sn',G.name);localStorage.setItem('spid',G.pid);localStorage.setItem('sp_ts',Date.now().toString());const p={client_id:SPOTIFY_CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,code_challenge_method:'S256',code_challenge:c,scope:SPOTIFY_SCOPE};if(showDialog)p.show_dialog='true';window.location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams(p);}
 async function exchangeCode(code){const v=localStorage.getItem('spv');if(!v){toast('❌ Erreur OAuth.');return null;}localStorage.removeItem('spv');localStorage.removeItem('sp_ts');const res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:SPOTIFY_CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});if(!res.ok){let b='';try{b=await res.text();}catch(e){}toast('❌ Spotify ('+res.status+'): '+(b.includes('redirect_uri')?'Redirect URI incorrect.':b.slice(0,80)));return null;}const td=await res.json();G.grantedScopes=td.scope||'';return td.access_token||null;}
 async function spFetch(method,path,body){if(!G.token)return null;try{const opts={method,headers:{Authorization:`Bearer ${G.token}`}};if(body){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body);}const res=await fetch('https://api.spotify.com/v1'+path,opts);if(res.status===401){G.token=null;toast('⚠️ Session expirée');}return res;}catch(e){toast('⚠️ Erreur réseau');return null;}}
@@ -415,8 +413,7 @@ function setupDJView(){
     const data=snap.val()||{},players=data.players||{},scores=data.scores||{};
     const buzzedBy=data.buzzedBy??null;
     lastPlayers=players;G.currentBuzzedBy=buzzedBy;
-    const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');
-    renderLeaderboard(guessers,scores,'players-list');
+    renderLeaderboard(Object.entries(players).filter(([,p])=>p.role==='guesser'),scores,'players-list');
     if(buzzedBy){
       const w=players[buzzedBy],name=w?.name||'Un joueur';
       if(buzzedBy!==_lastBuzzedBy){playBuzz();if(navigator.vibrate)navigator.vibrate([200,80,200,80,200]);showBuzzNotif(name);}
@@ -431,19 +428,18 @@ function setupDJView(){
 }
 function setupBuzzerView(){
   showView('view-buzzer');$('buzzer-name').textContent=G.name;
-  const btn=$('buzzer-btn'),st=$('buzzer-status');
+  const btn=$('buzzer-btn'),st=$('buzzer-status'),IDLE='Écoute et wizze quand tu reconnais !';
   let canBuzz=true,penTimer=null,penStart=null;
-  function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}},100);}
+  function startPenalty(ts){if(penTimer)return;penStart=ts;canBuzz=false;btn.className='red penalty';st.textContent='Pénalité… rewizze dans 5s';penTimer=setInterval(()=>{const rem=Math.max(0,5000-(Date.now()-ts));btn.textContent=Math.ceil(rem/1000)+'s';if(rem<=0){clearInterval(penTimer);penTimer=null;penStart=null;rRef(`penalties/${G.pid}`).remove();btn.className='';btn.textContent='WIZZ!';st.textContent=IDLE;canBuzz=true;}},100);}
   btn.onclick=async()=>{if(!canBuzz)return;if(navigator.vibrate)navigator.vibrate(80);await doBuzz();};
   rRef().on('value',snap=>{
     const data=snap.val()||{},buzzedBy=data.buzzedBy??null,myPen=(data.penalties||{})[G.pid]??null,players=data.players||{},scores=data.scores||{};
-    const djPlayer=Object.values(players).find(p=>p.role==='dj');
-    $('buzzer-dj-tag').textContent=djPlayer?`🎵 DJ : ${djPlayer.name}`:'';
-    const guessers=Object.entries(players).filter(([,p])=>p.role==='guesser');
-    renderLeaderboard(guessers,scores,'buzzer-lb-list');
+    const djP=Object.values(players).find(p=>p.role==='dj');
+    $('buzzer-dj-tag').textContent=djP?`🎵 DJ : ${djP.name}`:'';
+    renderLeaderboard(Object.entries(players).filter(([,p])=>p.role==='guesser'),scores,'buzzer-lb-list');
     if(myPen&&myPen!==penStart){startPenalty(myPen);return;}
     if(penStart)return;
-    if(!buzzedBy){btn.className='';btn.textContent='WIZZ!';st.textContent='Écoute et wizze quand tu reconnais !';canBuzz=true;}
+    if(!buzzedBy){btn.className='';btn.textContent='WIZZ!';st.textContent=IDLE;canBuzz=true;}
     else if(buzzedBy===G.pid){btn.className='green';btn.textContent='🏆';st.textContent='Tu as wizzé en premier !';canBuzz=false;if(navigator.vibrate)navigator.vibrate([100,50,150]);}
     else{const winner=players[buzzedBy];btn.className='red';btn.textContent='✗';st.textContent=(winner?.name||'Quelqu\'un')+' a été plus rapide que toi !';canBuzz=false;}
   });
